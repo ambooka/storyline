@@ -1,0 +1,262 @@
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+    text-align: center;
+    color: var(--color-text-tertiary);
+}
+
+.emptyState p {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+
+.emptyState span {
+    font-size: var(--text-xs);
+}
+
+.highlightList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.highlightCard {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.highlightCard:hover {
+    border-color: var(--color-border-strong);
+}
+
+.highlighted {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(255, 107, 84, 0.1);
+}
+
+.colorBar {
+    width: 4px;
+    min-height: 40px;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+}
+
+.highlightContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.highlightText {
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--color-text-primary);
+    margin: 0;
+    cursor: pointer;
+}
+
+.highlightText:hover {
+    color: var(--color-accent);
+}
+
+.noteText {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    margin: var(--space-2) 0 0;
+    padding: var(--space-2);
+    background: var(--color-bg-base);
+    border-radius: var(--radius-md);
+}
+
+.highlightActions {
+    margin-top: var(--space-3);
+    overflow: hidden;
+}
+
+.actionButtons {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.actionButtons button {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    background: var(--color-bg-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.actionButtons button:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.deleteBtn:hover {
+    border-color: #EF4444 !important;
+    color: #EF4444 !important;
+}
+
+.colorPicker {
+    display: flex;
+    gap: var(--space-1);
+    margin-left: auto;
+}
+
+.colorDot {
+    width: 20px;
+    height: 20px;
+    border-radius: var(--radius-full);
+    border: 2px solid transparent !important;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.colorDot:hover {
+    transform: scale(1.1);
+}
+
+.colorDotActive {
+    border-color: var(--color-text-primary) !important;
+}
+
+.expandIcon {
+    color: var(--color-text-tertiary);
+    transition: transform var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.expandIconRotated {
+    transform: rotate(180deg);
+}
+
+.noteEditor {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.noteInput {
+    width: 100%;
+    min-height: 80px;
+    padding: var(--space-2);
+    background: var(--color-bg-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+    resize: none;
+}
+
+.noteInput:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+.noteButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-2);
+}
+
+.noteButtons button {
+    padding: var(--space-1) var(--space-3);
+    background: var(--color-bg-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+}
+
+.saveBtn {
+    background: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+    color: white !important;
+}
+
+/* Selection Toolbar */
+.selectionToolbar {
+    position: fixed;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transform: translate(-50%, -100%);
+    margin-top: -var(--space-2);
+}
+
+.highlightColors {
+    display: flex;
+    gap: var(--space-1);
+}
+
+.colorButton {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.6);
+    transition: all var(--transition-fast);
+}
+
+.colorButton:hover {
+    transform: scale(1.1);
+}
+
+.toolbarDivider {
+    width: 1px;
+    height: 24px;
+    background: var(--color-border);
+    margin: 0 var(--space-1);
+}
+
+.reactionButtons {
+    display: flex;
+    gap: 2px;
+}
+
+.reactionButton {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.reactionButton:hover {
+    background: var(--color-bg-base);
+    transform: scale(1.15);
+}

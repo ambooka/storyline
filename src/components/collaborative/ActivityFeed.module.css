@@ -1,0 +1,135 @@
+.container {
+    margin-top: var(--space-3);
+}
+
+.toggleBtn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: #3B82F6;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.toggleBtnActive {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2));
+}
+
+.badge {
+    padding: 2px 6px;
+    background: #3B82F6;
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: 600;
+    color: white;
+}
+
+.feed {
+    margin-top: var(--space-3);
+    background: var(--color-surface);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-neu-raised);
+    max-height: 300px;
+    overflow: hidden;
+}
+
+.empty {
+    padding: var(--space-6);
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+}
+
+.feedList {
+    padding: var(--space-2);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: 280px;
+}
+
+.feedItem {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-base);
+}
+
+.feedItem:hover {
+    background: var(--color-bg-dark);
+}
+
+.avatar {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+}
+
+.avatar img,
+.avatar>span {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    background: linear-gradient(135deg, #6366F1, #8B5CF6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: white;
+}
+
+.iconBadge {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 18px;
+    height: 18px;
+    background: var(--color-surface);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    color: var(--color-accent);
+}
+
+.iconBadge span {
+    font-size: 10px;
+}
+
+.itemContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.itemContent p {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+    margin-bottom: 2px;
+}
+
+.itemContent strong {
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.bookTitle {
+    color: var(--color-accent);
+    font-weight: 500;
+}
+
+.timestamp {
+    font-size: 10px;
+    color: var(--color-text-muted);
+}

@@ -1,0 +1,217 @@
+.reactionBar {
+    position: relative;
+}
+
+.reactionButtons {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.reactionBtn {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.reactionBtn:hover {
+    border-color: var(--color-accent);
+    background: rgba(255, 107, 84, 0.1);
+}
+
+.emoji {
+    font-size: 18px;
+}
+
+.count {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    background: var(--color-accent);
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: 600;
+    color: white;
+}
+
+.noteOverlay {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    margin-bottom: var(--space-2);
+    padding: var(--space-3);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.noteHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
+.noteHeader button {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--color-text-tertiary);
+    cursor: pointer;
+}
+
+.noteOverlay textarea {
+    width: 100%;
+    min-height: 60px;
+    padding: var(--space-2);
+    background: var(--color-bg-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+    resize: none;
+}
+
+.noteOverlay textarea:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+.submitBtn {
+    width: 100%;
+    margin-top: var(--space-2);
+    padding: var(--space-2);
+    background: var(--color-accent);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+}
+
+/* Summary */
+.emptySummary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6);
+    text-align: center;
+    color: var(--color-text-tertiary);
+}
+
+.emptySummary p {
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+}
+
+.emptySummary span {
+    font-size: var(--text-xs);
+}
+
+.summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.summaryHeader {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.reactionsList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.reactionItem {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    background: var(--color-bg-base);
+    border-radius: var(--radius-md);
+}
+
+.itemEmoji {
+    font-size: 20px;
+}
+
+.itemInfo {
+    flex: 1;
+}
+
+.itemNote {
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+    margin: 0 0 4px;
+}
+
+.itemDate {
+    font-size: 10px;
+    color: var(--color-text-tertiary);
+}
+
+.deleteBtn {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--color-text-tertiary);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.reactionItem:hover .deleteBtn {
+    opacity: 1;
+}
+
+.deleteBtn:hover {
+    color: #EF4444;
+}
+
+.showMoreBtn {
+    padding: var(--space-2);
+    background: transparent;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    cursor: pointer;
+}
+
+.showMoreBtn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}

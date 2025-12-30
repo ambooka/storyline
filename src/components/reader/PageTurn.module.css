@@ -1,0 +1,53 @@
+.container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    perspective: 1000px;
+}
+
+.page {
+    width: 100%;
+    height: 100%;
+    touch-action: pan-y;
+    user-select: none;
+    will-change: transform;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+}
+
+.curlShadow {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    background: linear-gradient(to right,
+            rgba(0, 0, 0, 0.15) 0%,
+            rgba(0, 0, 0, 0.05) 40%,
+            transparent 100%);
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Touch feedback */
+.page:active {
+    cursor: grabbing;
+}
+
+/* Page styling for flip effect */
+.flipPage {
+    transform-style: preserve-3d;
+    transform-origin: left center;
+}
+
+/* Smooth transitions */
+@media (prefers-reduced-motion: no-preference) {
+    .page {
+        transition: box-shadow 0.15s ease;
+    }
+}
+
+/* Add subtle shadow during drag */
+.page:active {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}

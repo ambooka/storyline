@@ -1,0 +1,36 @@
+{
+    "appId": "com.storyline.app",
+    "appName": "Storyline",
+    "webDir": "out",
+    "bundledWebRuntime": false,
+    "plugins": {
+        "SplashScreen": {
+            "launchShowDuration": 2000,
+            "launchAutoHide": true,
+            "backgroundColor": "#0A0F1A",
+            "androidSplashResourceName": "splash",
+            "androidScaleType": "CENTER_CROP",
+            "showSpinner": false,
+            "splashFullScreen": true,
+            "splashImmersive": true
+        },
+        "StatusBar": {
+            "style": "Dark",
+            "backgroundColor": "#0A0F1A"
+        }
+    },
+    "ios": {
+        "contentInset": "automatic",
+        "preferredContentMode": "mobile"
+    },
+    "android": {
+        "allowMixedContent": true,
+        "captureInput": true,
+        "webContentsDebuggingEnabled": false
+    },
+    "server": {
+        "hostname": "storyline.app",
+        "androidScheme": "https",
+        "iosScheme": "https"
+    }
+}

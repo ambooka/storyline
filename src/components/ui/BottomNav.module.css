@@ -1,0 +1,120 @@
+/* ========================================
+   BOTTOM NAV - Mobile Navigation
+   Fixed bottom bar for mobile devices
+   ======================================== */
+
+.nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-sticky);
+    background: var(--color-surface);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
+    padding-bottom: var(--safe-area-bottom);
+    display: none;
+}
+
+/* Show only on mobile */
+@media (max-width: 767px) {
+    .nav {
+        display: block;
+    }
+}
+
+.navInner {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: var(--bottom-nav-height);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.navItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    padding: var(--space-2);
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
+    border: none;
+    background: transparent;
+    color: var(--color-text-tertiary);
+    font-size: 10px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border-radius: var(--radius-md);
+}
+
+.navItem:hover {
+    color: var(--color-accent);
+    background: var(--color-surface-sunken);
+}
+
+.navItem.active {
+    color: var(--color-accent);
+}
+
+.navItem.active .iconWrapper {
+    background: rgba(255, 107, 84, 0.15);
+}
+
+.iconWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    transition: background var(--transition-fast);
+}
+
+.label {
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Center action button (FAB) */
+.fabWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fab {
+    position: relative;
+    top: -16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border: none;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+    color: white;
+    box-shadow: var(--shadow-accent-glow);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.fab:hover {
+    transform: scale(1.05);
+}
+
+.fab:active {
+    transform: scale(0.95);
+}
+
+/* Hide bottom padding on pages to account for nav */
+@media (max-width: 767px) {
+    .navSpacer {
+        height: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
+    }
+}

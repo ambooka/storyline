@@ -1,0 +1,208 @@
+/* ========== Fluid Bottom Navigation ========== */
+
+.bottomNav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: var(--space-3) var(--space-4);
+    padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
+}
+
+/* Glassmorphic background */
+.glassBackground {
+    position: absolute;
+    inset: 0;
+    background: rgba(var(--color-bg-elevated-rgb, 30, 30, 40), 0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 -8px 32px rgba(0, 0, 0, 0.12),
+        0 -2px 8px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.glassShine {
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 1px;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.15) 50%,
+            transparent);
+}
+
+/* Navigation items container */
+.navItems {
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: var(--space-1) 0;
+}
+
+/* Individual nav item */
+.navItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: var(--space-2);
+    color: var(--color-text-tertiary);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    position: relative;
+    min-width: 60px;
+}
+
+.navItem:hover {
+    color: var(--color-text-secondary);
+}
+
+.navItemActive {
+    color: var(--color-accent);
+}
+
+/* Icon wrapper with spring animation */
+.iconWrapper {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-xl);
+}
+
+.icon {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.2s ease;
+}
+
+.navItemActive .icon {
+    transform: scale(1.1);
+}
+
+/* User avatar in nav */
+.userAvatar {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-accent);
+    object-fit: cover;
+}
+
+/* Active indicator pill */
+.activeIndicator {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+            rgba(255, 107, 84, 0.2) 0%,
+            rgba(255, 107, 84, 0.1) 100%);
+    border: 1px solid rgba(255, 107, 84, 0.3);
+    border-radius: var(--radius-xl);
+    box-shadow:
+        0 4px 12px rgba(255, 107, 84, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Label */
+.label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    opacity: 0.9;
+}
+
+.navItemActive .label {
+    font-weight: 600;
+}
+
+/* Floating Action Button */
+.fab {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg,
+            var(--color-accent) 0%,
+            #FF8A7A 100%);
+    border: none;
+    border-radius: var(--radius-full);
+    color: white;
+    cursor: pointer;
+    box-shadow:
+        0 8px 24px rgba(255, 107, 84, 0.4),
+        0 2px 8px rgba(255, 107, 84, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: box-shadow 0.3s ease;
+}
+
+.fab:hover {
+    box-shadow:
+        0 12px 32px rgba(255, 107, 84, 0.5),
+        0 4px 12px rgba(255, 107, 84, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.fab::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 10px;
+    right: 10px;
+    height: 12px;
+    background: linear-gradient(180deg,
+            rgba(255, 255, 255, 0.3) 0%,
+            transparent 100%);
+    border-radius: var(--radius-full);
+}
+
+/* Desktop adjustments */
+@media (min-width: 769px) {
+    .bottomNav {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        max-width: 500px;
+        border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+    }
+
+    .fab {
+        display: none;
+    }
+}
+
+/* Landscape adjustments */
+@media (max-height: 500px) {
+    .bottomNav {
+        padding: var(--space-2) var(--space-4);
+    }
+
+    .navItem {
+        padding: var(--space-1);
+    }
+
+    .iconWrapper {
+        width: 36px;
+        height: 36px;
+    }
+
+    .fab {
+        width: 48px;
+        height: 48px;
+        top: -20px;
+    }
+}

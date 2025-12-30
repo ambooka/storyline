@@ -1,0 +1,146 @@
+/* Screen Ruler */
+.screenRuler {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: calc(var(--z-sticky) + 50);
+}
+
+.rulerDim {
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.6);
+    transition: height 0.05s linear;
+}
+
+.rulerStrip {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 2px solid var(--color-accent-primary);
+    border-bottom: 2px solid var(--color-accent-primary);
+    background: transparent;
+    transition: top 0.05s linear;
+}
+
+/* Line Focus */
+.lineFocus {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: calc(var(--z-sticky) + 49);
+}
+
+.lineFocusDim {
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 1);
+    transition: opacity var(--transition-fast);
+}
+
+/* Color Filter */
+.colorFilter {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: calc(var(--z-sticky) + 48);
+    background: transparent;
+}
+
+/* TTS Highlight */
+.ttsHighlight {
+    padding: 2px 4px;
+    margin: 0 -4px;
+    border-radius: var(--radius-sm);
+    background-color: rgba(212, 165, 116, 0.4);
+    transition: background-color 0.1s ease;
+}
+
+/* Focus Indicator */
+.focusIndicator {
+    border: 3px solid var(--color-accent-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.3);
+    pointer-events: none;
+    z-index: var(--z-overlay);
+}
+
+/* Status Bar */
+.statusBar {
+    position: fixed;
+    bottom: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-lg);
+    z-index: var(--z-sticky);
+}
+
+.statusIcon {
+    font-size: 16px;
+}
+
+.statusText {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+}
+
+/* High Contrast Mode Adjustments */
+[data-high-contrast="true"] {
+    --color-text-primary: #000000;
+    --color-text-secondary: #000000;
+    --color-bg-primary: #FFFFFF;
+    --color-bg-secondary: #FFFFFF;
+    --color-border: #000000;
+    --color-accent-primary: #0000FF;
+}
+
+[data-theme="dark"][data-high-contrast="true"] {
+    --color-text-primary: #FFFFFF;
+    --color-text-secondary: #FFFFFF;
+    --color-bg-primary: #000000;
+    --color-bg-secondary: #000000;
+    --color-border: #FFFFFF;
+    --color-accent-primary: #FFFF00;
+}
+
+/* Skip to Content Link */
+.skipLink {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-accent-primary);
+    color: white;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    z-index: calc(var(--z-modal) + 100);
+    transition: top var(--transition-fast);
+}
+
+.skipLink:focus {
+    top: var(--space-4);
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+
+    .rulerDim,
+    .rulerStrip,
+    .lineFocusDim,
+    .ttsHighlight,
+    .focusIndicator,
+    .statusBar {
+        transition: none !important;
+        animation: none !important;
+    }
+}

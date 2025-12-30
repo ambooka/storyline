@@ -1,0 +1,172 @@
+/* ========================================
+   INPUT - Neumorphic Design System
+   Using design tokens for consistency
+   ======================================== */
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    width: 100%;
+}
+
+.label {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-neu-pressed);
+    transition: all var(--transition-base);
+    overflow: hidden;
+}
+
+.inputWrapper:hover {
+    box-shadow:
+        inset 3px 3px 6px rgba(163, 177, 198, 0.5),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.7);
+}
+
+.inputWrapper:focus-within {
+    box-shadow: var(--focus-ring), var(--shadow-neu-pressed);
+}
+
+/* Error State */
+.inputWrapper.error {
+    box-shadow:
+        var(--shadow-neu-pressed),
+        inset 0 0 0 2px var(--color-danger);
+}
+
+.inputWrapper.error:focus-within {
+    box-shadow:
+        0 0 0 3px rgba(239, 68, 68, 0.3),
+        var(--shadow-neu-pressed),
+        inset 0 0 0 2px var(--color-danger);
+}
+
+/* Success State */
+.inputWrapper.success {
+    box-shadow:
+        var(--shadow-neu-pressed),
+        inset 0 0 0 2px var(--color-success);
+}
+
+.inputWrapper.success:focus-within {
+    box-shadow:
+        0 0 0 3px rgba(34, 197, 94, 0.3),
+        var(--shadow-neu-pressed),
+        inset 0 0 0 2px var(--color-success);
+}
+
+.input {
+    flex: 1;
+    padding: var(--space-3) var(--space-4);
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: var(--text-base);
+    font-family: var(--font-sans);
+    color: var(--color-text-primary);
+    min-height: var(--touch-target);
+}
+
+.input::placeholder {
+    color: var(--color-text-muted);
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .inputWrapper {
+    box-shadow:
+        inset 4px 4px 8px rgba(0, 0, 0, 0.4),
+        inset -4px -4px 8px rgba(40, 45, 55, 0.4);
+}
+
+[data-theme="dark"] .inputWrapper:hover {
+    box-shadow:
+        inset 3px 3px 6px rgba(0, 0, 0, 0.35),
+        inset -3px -3px 6px rgba(40, 45, 55, 0.35);
+}
+
+/* Icons */
+.leftIcon {
+    display: flex;
+    align-items: center;
+    padding-left: var(--space-4);
+    color: var(--color-text-muted);
+}
+
+.rightIcon {
+    display: flex;
+    align-items: center;
+    padding-right: var(--space-4);
+    color: var(--color-text-muted);
+}
+
+.statusIcon {
+    display: flex;
+    align-items: center;
+    padding-right: var(--space-3);
+}
+
+.error .statusIcon {
+    color: var(--color-danger);
+}
+
+.success .statusIcon {
+    color: var(--color-success);
+}
+
+/* Password Toggle */
+.passwordToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2);
+    margin-right: var(--space-2);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.passwordToggle:hover {
+    color: var(--color-text-primary);
+    background: var(--color-surface-sunken);
+}
+
+/* Message */
+.message {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    padding-left: var(--space-1);
+}
+
+.errorText {
+    color: var(--color-danger);
+}
+
+.successText {
+    color: var(--color-success);
+}
+
+/* Size Variants */
+.inputWrapper.sm .input {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    min-height: var(--touch-target-sm);
+}
+
+.inputWrapper.lg .input {
+    padding: var(--space-4) var(--space-5);
+    font-size: var(--text-lg);
+    min-height: 52px;
+}

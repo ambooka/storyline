@@ -1,0 +1,94 @@
+.picker {
+    position: fixed;
+    z-index: 1000;
+}
+
+.pickerContent {
+    display: flex;
+    gap: var(--space-1);
+    padding: var(--space-2);
+    background: var(--color-surface);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-lg);
+}
+
+.emojiBtn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-full);
+    font-size: 18px;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.emojiBtn:hover {
+    background: var(--color-bg-dark);
+    transform: scale(1.2);
+}
+
+.pickerArrow {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    background: var(--color-surface);
+    transform: translateX(-50%) rotate(45deg);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+}
+
+/* Reactable Text */
+.reactableText {
+    display: inline;
+}
+
+.word {
+    position: relative;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all var(--transition-base);
+}
+
+.word:hover {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.hasReactions {
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.wordReactions {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1px;
+    padding: 2px;
+    background: var(--color-surface);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-sm);
+    pointer-events: none;
+}
+
+.miniReaction {
+    font-size: 10px;
+}
+
+.moreReactions {
+    font-size: 8px;
+    color: var(--color-text-tertiary);
+    padding: 0 2px;
+}

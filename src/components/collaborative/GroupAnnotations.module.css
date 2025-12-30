@@ -1,0 +1,290 @@
+.container {
+    margin-top: var(--space-3);
+}
+
+.toggleBtn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(219, 39, 119, 0.1));
+    border: 1px solid rgba(236, 72, 153, 0.3);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: #EC4899;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.toggleBtnActive {
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(219, 39, 119, 0.2));
+}
+
+.badge {
+    padding: 2px 6px;
+    background: #EC4899;
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: 600;
+    color: white;
+}
+
+.quickAdd {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    margin-bottom: var(--space-2);
+}
+
+.quickAdd button {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+}
+
+.panel {
+    margin-top: var(--space-3);
+    background: var(--color-surface);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-neu-raised);
+    overflow: hidden;
+}
+
+.panelHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-bg-dark);
+}
+
+.panelHeader h4 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.panelHeader button {
+    background: transparent;
+    border: none;
+    color: var(--color-text-tertiary);
+    cursor: pointer;
+}
+
+/* Add Form */
+.addForm {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-bg-dark);
+    background: var(--color-bg-dark);
+}
+
+.selectedText {
+    font-size: var(--text-sm);
+    font-style: italic;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-3);
+    padding: var(--space-2);
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+}
+
+.colorPicker {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+}
+
+.colorBtn {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.colorBtnActive {
+    border-color: var(--color-text-primary);
+    transform: scale(1.2);
+}
+
+.noteInput {
+    width: 100%;
+    padding: var(--space-3);
+    background: var(--color-surface);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+    resize: none;
+    min-height: 80px;
+    outline: none;
+}
+
+.formActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+}
+
+.cancelBtn,
+.submitBtn {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.cancelBtn {
+    background: transparent;
+    border: 1px solid var(--color-bg-dark);
+    color: var(--color-text-secondary);
+}
+
+.submitBtn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: linear-gradient(135deg, #EC4899, #DB2777);
+    border: none;
+    color: white;
+}
+
+/* Annotations List */
+.annotationsList {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: var(--space-3);
+}
+
+.emptyState {
+    text-align: center;
+    padding: var(--space-6);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+}
+
+.annotationItem {
+    padding: var(--space-3);
+    background: var(--color-bg-dark);
+    border-radius: var(--radius-lg);
+    border-left: 3px solid;
+    margin-bottom: var(--space-2);
+}
+
+.annotationHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-2);
+}
+
+.annotationUser {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.annotationUser img,
+.annotationUser span {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    background: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: white;
+}
+
+.annotationUser strong {
+    font-size: var(--text-xs);
+    color: var(--color-text-primary);
+}
+
+.expandBtn {
+    background: transparent;
+    border: none;
+    color: var(--color-text-tertiary);
+    cursor: pointer;
+}
+
+.annotationQuote {
+    font-size: var(--text-xs);
+    font-style: italic;
+    color: var(--color-text-tertiary);
+    margin-bottom: var(--space-1);
+}
+
+.annotationNote {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+}
+
+/* Replies */
+.repliesSection {
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-surface);
+}
+
+.reply {
+    padding: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+
+.reply strong {
+    font-size: 10px;
+    color: var(--color-text-tertiary);
+}
+
+.reply p {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+}
+
+.replyInput {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.replyInput input {
+    flex: 1;
+    padding: var(--space-2);
+    background: var(--color-surface);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    color: var(--color-text-primary);
+    outline: none;
+}
+
+.replyInput button {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-accent);
+    border: none;
+    border-radius: var(--radius-md);
+    color: white;
+    cursor: pointer;
+}

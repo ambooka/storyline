@@ -1,0 +1,425 @@
+/* Remove sidebar/mobileNav - using shared components now */
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+}
+
+.headerLeft h1 {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.subtitle {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.createBtn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    background: linear-gradient(135deg, var(--color-accent), #FF8A7A);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    box-shadow: var(--shadow-accent-glow);
+    transition: all var(--transition-base);
+}
+
+.createBtn:hover {
+    transform: translateY(-2px);
+}
+
+/* Section */
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.sectionTitle {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+/* Club Grid */
+.clubGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+}
+
+.clubCard {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-surface);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-neu-raised-sm);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.clubCard:hover {
+    box-shadow: var(--shadow-neu-raised);
+}
+
+.clubCardJoined {
+    border: 2px solid var(--color-accent);
+}
+
+.clubCover {
+    position: relative;
+    height: 120px;
+    overflow: hidden;
+}
+
+.clubCover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.clubBadge {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-2);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: var(--radius-full);
+    color: white;
+}
+
+.clubContent {
+    padding: var(--space-4);
+}
+
+.clubName {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 4px;
+}
+
+.clubDesc {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+    margin-bottom: var(--space-3);
+}
+
+.clubMeta {
+    display: flex;
+    gap: var(--space-4);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+.clubMeta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Loading & Empty */
+.loadingState {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-10);
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-8);
+    color: var(--color-text-tertiary);
+    text-align: center;
+}
+
+/* Modal Overlay */
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: var(--space-4);
+}
+
+/* Club Detail Modal */
+.clubDetailModal {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    background: var(--color-surface);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-6);
+}
+
+.closeBtn {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-surface);
+    border: none;
+    border-radius: var(--radius-full);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    box-shadow: var(--shadow-neu-raised-sm);
+}
+
+.detailHeader {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+}
+
+.detailCover {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-xl);
+    object-fit: cover;
+    box-shadow: var(--shadow-neu-raised);
+}
+
+.detailInfo h2 {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 4px;
+}
+
+.detailInfo p {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2);
+}
+
+.detailMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+}
+
+.detailMeta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.currentBook {
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-neu-pressed);
+    margin-bottom: var(--space-5);
+}
+
+.currentBook h3 {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-3);
+}
+
+.bookCard {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.bookCard img {
+    width: 48px;
+    height: 72px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+}
+
+.bookCard div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.bookCard strong {
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+}
+
+.bookCard span {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+}
+
+.joinBtn {
+    width: 100%;
+    padding: var(--space-3);
+    background: linear-gradient(135deg, var(--color-accent), #FF8A7A);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    box-shadow: var(--shadow-accent-glow);
+}
+
+.joinBtnLeave {
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    box-shadow: var(--shadow-neu-raised-sm);
+}
+
+/* Create Modal */
+.createModal {
+    width: 100%;
+    max-width: 450px;
+    background: var(--color-surface);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-6);
+}
+
+.createModal h2 {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-5);
+}
+
+.formGroup {
+    margin-bottom: var(--space-4);
+}
+
+.formGroup label {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2);
+}
+
+.formInput,
+.formTextarea,
+.formSelect {
+    width: 100%;
+    padding: var(--space-3);
+    min-height: 44px;
+    background: var(--color-surface);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+    box-shadow: var(--shadow-neu-pressed);
+    outline: none;
+}
+
+.formTextarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.formCheck {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-5);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+}
+
+.formCheck input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-accent);
+}
+
+.formActions {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: flex-end;
+}
+
+.cancelBtn {
+    padding: var(--space-3) var(--space-5);
+    background: var(--color-surface);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    box-shadow: var(--shadow-neu-raised-sm);
+}
+
+.submitBtn {
+    padding: var(--space-3) var(--space-5);
+    background: linear-gradient(135deg, var(--color-accent), #FF8A7A);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    box-shadow: var(--shadow-accent-glow);
+}
+
+.submitBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .headerRight {
+        flex-direction: column;
+    }
+
+    .clubGrid {
+        grid-template-columns: 1fr;
+    }
+}

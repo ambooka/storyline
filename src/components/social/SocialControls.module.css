@@ -1,0 +1,168 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.header svg {
+    color: var(--color-accent);
+}
+
+.slider {
+    position: relative;
+    padding: var(--space-2) 0;
+}
+
+.sliderInput {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: linear-gradient(to right,
+            var(--color-accent) 0%,
+            var(--color-accent) calc(var(--value, 50) * 33.33%),
+            var(--color-border) calc(var(--value, 50) * 33.33%),
+            var(--color-border) 100%);
+    border-radius: var(--radius-full);
+    outline: none;
+}
+
+.sliderInput::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.trackMarks {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.mark {
+    width: 12px;
+    height: 12px;
+    background: var(--color-bg-base);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    pointer-events: auto;
+    transition: all var(--transition-fast);
+}
+
+.markActive {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+.levelInfo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--color-bg-base);
+    border-radius: var(--radius-lg);
+}
+
+.levelInfo svg {
+    color: var(--color-accent);
+}
+
+.levelText {
+    display: flex;
+    flex-direction: column;
+}
+
+.levelLabel {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.levelDescription {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    background: var(--color-bg-base);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    transition: all var(--transition-fast);
+}
+
+.featureActive {
+    color: var(--color-text-primary);
+}
+
+.featureActive svg {
+    color: var(--color-accent);
+}
+
+/* Ghost Readers */
+.ghostContainer {
+    position: absolute;
+    bottom: 70px;
+    left: 0;
+    right: 0;
+    height: 40px;
+    pointer-events: none;
+}
+
+.ghost {
+    position: absolute;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    background: var(--color-bg-elevated);
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.ghostAvatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-full);
+}

@@ -1,0 +1,135 @@
+/* Loading State Styles */
+
+/* Skeleton Base */
+.skeleton {
+    background: linear-gradient(90deg,
+            var(--color-bg-dark) 25%,
+            var(--color-surface) 50%,
+            var(--color-bg-dark) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius-md);
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Book Card Skeleton */
+.bookCard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.cover {
+    width: 100%;
+    aspect-ratio: 2/3;
+    border-radius: var(--radius-lg);
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.title {
+    height: 16px;
+    width: 80%;
+}
+
+.author {
+    height: 12px;
+    width: 60%;
+}
+
+/* Room Card Skeleton */
+.roomCard {
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-neu);
+}
+
+.roomHeader {
+    height: 12px;
+    width: 40%;
+    margin-bottom: var(--space-3);
+}
+
+.roomContent {
+    margin-bottom: var(--space-3);
+}
+
+.roomTitle {
+    height: 20px;
+    width: 70%;
+    margin-bottom: var(--space-2);
+}
+
+.roomMeta {
+    height: 14px;
+    width: 50%;
+}
+
+.roomAvatars {
+    height: 32px;
+    width: 100px;
+    border-radius: var(--radius-full);
+}
+
+/* Grids */
+.bookGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--space-4);
+}
+
+.roomGrid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+/* Page Loader */
+.pageLoader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    min-height: 200px;
+    color: var(--color-text-tertiary);
+}
+
+.pageLoader p {
+    font-size: var(--text-sm);
+    font-weight: 500;
+}
+
+.loaderRing {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--color-bg-dark);
+    border-top-color: var(--color-accent);
+    border-radius: var(--radius-full);
+}
+
+/* Spinner */
+.spinner {
+    border: 2px solid var(--color-bg-dark);
+    border-top-color: var(--color-accent);
+    border-radius: var(--radius-full);
+}
+
+/* Shimmer effect */
+.shimmer {
+    border-radius: var(--radius-sm);
+}

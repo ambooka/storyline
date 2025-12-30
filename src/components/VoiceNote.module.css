@@ -1,0 +1,137 @@
+.recorder {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-xl);
+}
+
+.recordBtn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: linear-gradient(135deg, var(--color-accent-secondary), #E85D4C);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.recordBtn:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md);
+}
+
+.recordingIndicator {
+    width: 12px;
+    height: 12px;
+    background: var(--color-error);
+    border-radius: var(--radius-full);
+}
+
+.duration {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-primary);
+    min-width: 80px;
+}
+
+.stopBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--color-error);
+    border: none;
+    border-radius: var(--radius-full);
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.stopBtn:hover {
+    background: #D32F2F;
+}
+
+/* Player */
+.player {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+}
+
+.playBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--color-accent-primary);
+    border: none;
+    border-radius: var(--radius-full);
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.playBtn:hover {
+    transform: scale(1.05);
+    background: var(--color-accent-secondary);
+}
+
+.waveform {
+    flex: 1;
+    height: 32px;
+    overflow: hidden;
+}
+
+.waveformBg {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 100%;
+}
+
+.waveformBar {
+    flex: 1;
+    background: var(--color-accent-primary);
+    border-radius: 2px;
+    transition: opacity var(--transition-fast);
+}
+
+.time {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    min-width: 60px;
+    text-align: center;
+}
+
+.deleteBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-full);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.deleteBtn:hover {
+    background: var(--color-error);
+    color: white;
+}

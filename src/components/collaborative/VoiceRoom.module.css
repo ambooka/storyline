@@ -1,0 +1,154 @@
+.container {
+    position: relative;
+}
+
+/* Voice Bar when in call */
+.voiceBar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    background: linear-gradient(135deg, #1E1B4B, #312E81);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+}
+
+/* Speaking Indicators */
+.speakingIndicators {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.participant {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-base);
+}
+
+.participant img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.participant span {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: white;
+}
+
+.speaking {
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.5);
+}
+
+.speakingRing {
+    position: absolute;
+    inset: -4px;
+    border: 2px solid #22C55E;
+    border-radius: var(--radius-full);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.5;
+    }
+}
+
+.muted {
+    opacity: 0.5;
+}
+
+.mutedIcon {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 16px;
+    height: 16px;
+    background: #EF4444;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    gap: var(--space-2);
+    margin-left: auto;
+}
+
+.controlBtn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: var(--radius-full);
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.controlBtn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.controlBtnActive {
+    background: #EF4444;
+}
+
+.leaveBtn {
+    background: #EF4444;
+}
+
+.leaveBtn:hover {
+    background: #DC2626;
+}
+
+/* Join Button */
+.joinBtn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    background: linear-gradient(135deg, #6366F1, #8B5CF6);
+    border: none;
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    transition: all var(--transition-base);
+}
+
+.joinBtn:hover {
+    box-shadow: 0 6px 30px rgba(99, 102, 241, 0.6);
+}
+
+.participantCount {
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-full);
+    font-size: 10px;
+}

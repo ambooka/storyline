@@ -1,0 +1,162 @@
+/* ========== Reader Context Menu - Morphic Design ========== */
+
+.menu {
+    position: fixed;
+    z-index: 10000;
+    min-width: 220px;
+    padding: var(--space-2);
+    background: var(--color-surface, #E4E9F0);
+    border-radius: var(--radius-xl);
+    box-shadow:
+        var(--shadow-neu-raised),
+        0 16px 48px rgba(0, 0, 0, 0.2);
+}
+
+/* Selected text preview */
+.preview {
+    padding: var(--space-2) var(--space-3);
+    margin-bottom: var(--space-2);
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-neu-pressed);
+}
+
+.preview p {
+    font-size: 12px;
+    font-style: italic;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Reactions Row */
+.reactionsRow {
+    display: flex;
+    justify-content: space-around;
+    padding: var(--space-2);
+}
+
+.reactionBtn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-surface);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: var(--shadow-neu-raised-sm);
+    transition: all 0.15s ease;
+}
+
+.reactionBtn:hover {
+    transform: scale(1.15);
+    box-shadow: var(--shadow-neu-raised);
+}
+
+.reactionBtn:active {
+    transform: scale(0.95);
+    box-shadow: var(--shadow-neu-pressed);
+}
+
+/* Divider */
+.divider {
+    height: 1px;
+    background: var(--color-text-muted);
+    opacity: 0.15;
+    margin: var(--space-2) 0;
+}
+
+/* Actions List */
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.actionBtn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+}
+
+.actionBtn:hover {
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    box-shadow: var(--shadow-neu-raised-sm);
+}
+
+.actionBtnActive {
+    background: var(--color-surface);
+    color: var(--color-accent);
+}
+
+/* Highlight Wrapper */
+.highlightWrapper {
+    position: relative;
+}
+
+/* Color Picker */
+.colorPicker {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    margin-left: var(--space-2);
+    display: flex;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-neu-raised);
+}
+
+.colorBtn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.colorBtn:hover {
+    transform: scale(1.2);
+}
+
+/* ========== Dark Theme Support ========== */
+:global(.themeDark) .menu,
+:global(.themeAmoled) .menu {
+    background: #1A1D24;
+}
+
+:global(.themeDark) .preview,
+:global(.themeAmoled) .preview {
+    background: #0F1218;
+}
+
+:global(.themeDark) .reactionBtn,
+:global(.themeAmoled) .reactionBtn {
+    background: #252A35;
+}
+
+:global(.themeDark) .actionBtn:hover,
+:global(.themeAmoled) .actionBtn:hover {
+    background: #252A35;
+}
+
+:global(.themeDark) .colorPicker,
+:global(.themeAmoled) .colorPicker {
+    background: #252A35;
+}
