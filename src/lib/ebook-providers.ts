@@ -71,33 +71,40 @@ interface GutendexResponse {
 }
 
 function parseGutendexBook(book: GutendexBook): Book {
-    const epubUrl = book.formats['application/epub+zip'] || null;
     const coverUrl = book.formats['image/jpeg'] || null;
 
-    const formats: BookFormat[] = Object.entries(book.formats)
-        .filter(([mime]) =>
-            mime.includes('epub') ||
-            mime.includes('pdf') ||
-            mime.includes('text/plain') ||
-            mime.includes('text/html')
-        )
-        .map(([mimeType, url]) => ({
-            mimeType,
-            url,
-            label: mimeType.includes('epub') ? 'EPUB' :
-                mimeType.includes('pdf') ? 'PDF' :
-                    mimeType.includes('html') ? 'HTML' : 'Text',
-        }));
+    // Convert Gutenberg redirect URLs to direct cache URLs
+    // Redirect: https://www.gutenberg.org/ebooks/1342.epub3.images
+    // Direct:   https://www.gutenberg.org/cache/epub/1342/pg1342-images.epub
+    const bookId = book.id;
+    const directEpubUrl = `https://www.gutenberg.org/cache/epub/${bookId}/pg${bookId}-images.epub`;
+
+    const formats: BookFormat[] = [
+        {
+            mimeType: 'application/epub+zip',
+            url: directEpubUrl,
+            label: 'EPUB',
+        }
+    ];
+
+    // Add other formats if available
+    if (book.formats['application/pdf']) {
+        formats.push({
+            mimeType: 'application/pdf',
+            url: book.formats['application/pdf'],
+            label: 'PDF',
+        });
+    }
 
     return {
         id: `gutenberg-${book.id}`,
         title: book.title,
         author: book.authors.map(a => a.name).join(', ') || 'Unknown Author',
         authors: book.authors.map(a => a.name),
-        cover: coverUrl,
+        cover: coverUrl || `https://www.gutenberg.org/cache/epub/${bookId}/pg${bookId}.cover.medium.jpg`,
         subjects: [...book.subjects, ...book.bookshelves],
         languages: book.languages,
-        downloadUrl: epubUrl,
+        downloadUrl: directEpubUrl,
         formats,
         source: 'gutenberg',
         downloadCount: book.download_count,
@@ -121,7 +128,7 @@ export async function searchGutenberg(options: SearchOptions = {}): Promise<Sear
 
     try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
 
         const response = await fetch(url, { signal: controller.signal });
         clearTimeout(timeoutId);
@@ -187,17 +194,12 @@ function parseOpenLibraryBook(doc: OpenLibraryDoc): Book {
         : null;
 
     const iaId = doc.ia?.[0];
-    const downloadUrl = iaId
-        ? `https://archive.org/download/${iaId}/${iaId}.epub`
-        : null;
 
-    const formats: BookFormat[] = [];
-    if (iaId) {
-        formats.push(
-            { mimeType: 'application/epub+zip', url: `https://archive.org/download/${iaId}/${iaId}.epub`, label: 'EPUB' },
-            { mimeType: 'application/pdf', url: `https://archive.org/download/${iaId}/${iaId}.pdf`, label: 'PDF' }
-        );
-    }
+    // Archive.org download URLs are unreliable (file naming varies)
+    // Use preview URL instead - users can read/borrow from Archive.org
+    const previewUrl = iaId
+        ? `https://archive.org/details/${iaId}`
+        : `https://openlibrary.org${doc.key}`;
 
     return {
         id: `openlibrary-${doc.key.replace('/works/', '')}`,
@@ -207,8 +209,9 @@ function parseOpenLibraryBook(doc: OpenLibraryDoc): Book {
         cover: coverUrl,
         subjects: doc.subject?.slice(0, 10) || [],
         languages: doc.language || ['en'],
-        downloadUrl,
-        formats,
+        downloadUrl: null, // No direct download - use previewUrl
+        previewUrl,
+        formats: [],
         source: 'openlibrary',
         publishedYear: doc.first_publish_year,
     };
@@ -339,7 +342,7 @@ export async function searchInternetArchive(options: SearchOptions = {}): Promis
 
     try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
 
         const response = await fetch(url, { signal: controller.signal });
         clearTimeout(timeoutId);
@@ -714,26 +717,8 @@ export async function searchAllProviders(options: SearchOptions = {}): Promise<S
         }
     }
 
-    // If we have a query, also search scraped sources (AllEpub is most reliable)
-    if (options.query && allBooks.length < 20) {
-        try {
-            console.log('Also searching scraped sources...');
-            const scrapedResults = await Promise.allSettled([
-                searchScrapedSource('allepub', options),
-                searchScrapedSource('libgen', options),
-            ]);
-
-            for (const result of scrapedResults) {
-                if (result.status === 'fulfilled' && result.value.books.length > 0) {
-                    console.log(`Scraped source: ${result.value.books.length} books`);
-                    allBooks.push(...result.value.books);
-                    totalCount += result.value.books.length;
-                }
-            }
-        } catch (e) {
-            console.log('Scraped sources failed, continuing with API results');
-        }
-    }
+    // Skip scraped sources by default (they're often blocked and slow down search)
+    // Users can manually select these sources if they want
 
     // Remove duplicates based on title similarity
     const seen = new Set<string>();

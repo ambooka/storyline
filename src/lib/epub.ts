@@ -189,6 +189,27 @@ export class EpubParser {
             }
         }
 
+        // Generate locations for percentage-based progress tracking (run in background)
+        // This is required for book.locations.percentageFromCfi() to work
+        // Don't block book loading - run with timeout in background
+        const book = this.book;
+        setTimeout(async () => {
+            try {
+                console.log('Generating book locations for progress tracking...');
+                // Race between generation and timeout
+                const timeoutPromise = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Location generation timed out')), 10000)
+                );
+                await Promise.race([
+                    book.locations.generate(2048), // Larger chunks = faster generation
+                    timeoutPromise
+                ]);
+                console.log('Book locations generated successfully');
+            } catch (locError) {
+                console.warn('Location generation skipped (progress may use page-based fallback):', locError);
+            }
+        }, 100); // Start after 100ms to ensure display is ready
+
         return this.rendition;
     }
 
@@ -230,10 +251,40 @@ export class EpubParser {
 
     onRelocated(callback: (location: { cfi: string; progress: number }) => void): void {
         if (!this.rendition) return;
-        this.rendition.on('relocated', (location: { start: { cfi: string; percentage: number } }) => {
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.rendition.on('relocated', (location: any) => {
+            const cfi = location.start?.cfi || location.startCfi || '';
+
+            // Try multiple ways to get percentage (epub.js API varies between versions)
+            let percentage = 0;
+
+            // Method 1: location.start.percentage (common)
+            if (typeof location.start?.percentage === 'number') {
+                percentage = location.start.percentage;
+            }
+            // Method 2: book.locations.percentageFromCfi (more reliable)
+            else if (this.book && cfi && typeof this.book.locations?.percentageFromCfi === 'function') {
+                try {
+                    percentage = this.book.locations.percentageFromCfi(cfi) || 0;
+                } catch {
+                    percentage = 0;
+                }
+            }
+            // Method 3: Calculate from displayed page / total pages
+            else if (location.start?.displayed) {
+                const displayed = location.start.displayed;
+                if (displayed.page && displayed.total) {
+                    percentage = displayed.page / displayed.total;
+                }
+            }
+
+            const progress = Math.round(percentage * 100);
+            console.log(`Relocated: CFI=${cfi}, raw percentage=${percentage}, progress=${progress}%`);
+
             callback({
-                cfi: location.start.cfi,
-                progress: Math.round(location.start.percentage * 100),
+                cfi,
+                progress,
             });
         });
     }
@@ -256,6 +307,76 @@ export class EpubParser {
     setFontSize(size: string): void {
         if (!this.rendition) return;
         this.rendition.themes.fontSize(size);
+    }
+
+    // Inject word wrapping for TTS highlighting
+    injectWordWrapping(): void {
+        if (!this.rendition) return;
+
+        this.rendition.hooks.content.register((contents: Contents) => {
+            const doc = contents.document;
+            if (!doc) return;
+
+            // Add highlighting stylesheet
+            const style = doc.createElement('style');
+            style.textContent = `
+                .tts-highlight {
+                    background: linear-gradient(120deg, rgba(255, 107, 84, 0.3) 0%, rgba(255, 138, 122, 0.3) 100%);
+                    padding: 2px 0;
+                    border-radius: 2px;
+                    animation: highlightPulse 0.3s ease-in-out;
+                    box-shadow: 0 0 0 2px rgba(255, 107, 84, 0.2);
+                }
+                
+                @keyframes highlightPulse {
+                    0% { transform: scale(1); opacity: 0.7; }
+                    50% { transform: scale(1.05); opacity: 1; }
+                    100% { transform: scale(1); opacity: 1; }
+                }
+                
+                .tts-word {
+                    display: inline;
+                }
+            `;
+            doc.head.appendChild(style);
+
+            let wordIndex = 0;
+
+            const wrapWords = (node: Node): void => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    const text = node.textContent || '';
+                    if (!text.trim()) return;
+
+                    // Split on whitespace while preserving it
+                    const parts = text.split(/(\s+)/);
+                    const fragment = doc.createDocumentFragment();
+
+                    parts.forEach(part => {
+                        if (part.trim()) {
+                            const span = doc.createElement('span');
+                            span.className = 'tts-word';
+                            span.setAttribute('data-word-index', String(wordIndex++));
+                            span.textContent = part;
+                            fragment.appendChild(span);
+                        } else {
+                            fragment.appendChild(doc.createTextNode(part));
+                        }
+                    });
+
+                    node.parentNode?.replaceChild(fragment, node);
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    const element = node as Element;
+                    // Skip script, style, and already wrapped elements
+                    if (!['SCRIPT', 'STYLE', 'SPAN'].includes(element.tagName) &&
+                        !element.classList.contains('tts-word')) {
+                        Array.from(node.childNodes).forEach(child => wrapWords(child));
+                    }
+                }
+            };
+
+            // Wrap words in body content
+            wrapWords(doc.body);
+        });
     }
 
     destroy(): void {
@@ -339,11 +460,17 @@ export async function updateBookProgress(
     progress: number,
     cfi: string
 ): Promise<void> {
-    await db.books.update(id, {
-        progress,
-        currentCfi: cfi,
-        lastRead: new Date(),
-    });
+    try {
+        console.log(`Saving progress for book ${id}: ${progress}% at ${cfi}`);
+        await db.books.update(id, {
+            progress,
+            currentCfi: cfi,
+            lastRead: new Date(),
+        });
+        console.log(`Progress saved successfully for book ${id}`);
+    } catch (error) {
+        console.error(`Failed to save progress for book ${id}:`, error);
+    }
 }
 
 export async function deleteBook(id: string): Promise<void> {

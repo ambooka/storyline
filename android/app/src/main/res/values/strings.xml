@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Storyline</string>
+    <string name="title_activity_main">Storyline</string>
+    <string name="package_name">com.storyline.app</string>
+    <string name="custom_url_scheme">com.storyline.app</string>
+</resources>

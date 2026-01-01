@@ -229,7 +229,7 @@ interface ReactionsSummaryProps {
 
 export function ReactionsSummary({ reactions, onDeleteReaction }: ReactionsSummaryProps) {
   const [showAll, setShowAll] = useState(false);
-  
+
   const recentReactions = showAll ? reactions : reactions.slice(0, 5);
 
   if (reactions.length === 0) {
@@ -247,7 +247,7 @@ export function ReactionsSummary({ reactions, onDeleteReaction }: ReactionsSumma
       <div className={styles.summaryHeader}>
         <span>Your Reactions ({reactions.length})</span>
       </div>
-      
+
       <div className={styles.reactionsList}>
         {recentReactions.map((reaction) => (
           <motion.div
@@ -263,7 +263,7 @@ export function ReactionsSummary({ reactions, onDeleteReaction }: ReactionsSumma
                 {new Date(reaction.createdAt).toLocaleDateString()}
               </span>
             </div>
-            <button 
+            <button
               className={styles.deleteBtn}
               onClick={() => onDeleteReaction(reaction.id)}
             >
@@ -274,7 +274,7 @@ export function ReactionsSummary({ reactions, onDeleteReaction }: ReactionsSumma
       </div>
 
       {reactions.length > 5 && (
-        <button 
+        <button
           className={styles.showMoreBtn}
           onClick={() => setShowAll(!showAll)}
         >

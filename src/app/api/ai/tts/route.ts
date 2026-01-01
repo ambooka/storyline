@@ -56,10 +56,33 @@ export async function POST(request: NextRequest) {
         // Get TTS client
         const client = getTTSClient();
 
-        // Limit text length
-        const trimmedText = text.slice(0, 5000);
+        // Properly limit text by bytes (Google TTS limit is 5000 bytes)
+        // Use 4000 bytes max to be safe with encoding overhead
+        const maxBytes = 4000;
+        let trimmedText = text;
 
-        // Synthesize speech
+        // Calculate byte length and trim if needed
+        const encoder = new TextEncoder();
+        let byteLength = encoder.encode(trimmedText).length;
+
+        while (byteLength > maxBytes && trimmedText.length > 0) {
+            // Trim by ~10% each iteration
+            const trimAmount = Math.max(1, Math.floor(trimmedText.length * 0.1));
+            trimmedText = trimmedText.slice(0, -trimAmount);
+            byteLength = encoder.encode(trimmedText).length;
+        }
+
+        // Clean up - try to end at a sentence boundary if possible
+        const lastSentence = Math.max(
+            trimmedText.lastIndexOf('.'),
+            trimmedText.lastIndexOf('!'),
+            trimmedText.lastIndexOf('?')
+        );
+        if (lastSentence > trimmedText.length * 0.5) {
+            trimmedText = trimmedText.slice(0, lastSentence + 1);
+        }
+
+        // Synthesize speech with high quality settings
         const [response] = await client.synthesizeSpeech({
             input: { text: trimmedText },
             voice: {
@@ -67,10 +90,10 @@ export async function POST(request: NextRequest) {
                 name: voice,
             },
             audioConfig: {
-                audioEncoding: "MP3",
+                audioEncoding: "MP3", // MP3 for universal browser support
                 speakingRate: Math.max(0.25, Math.min(4.0, speed)),
                 pitch: Math.max(-20.0, Math.min(20.0, pitch)),
-                effectsProfileId: ["headphone-class-device"], // Better audio quality
+                effectsProfileId: ["large-home-entertainment-class-device"], // Premium audio quality
             },
         });
 

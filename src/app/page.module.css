@@ -1,104 +1,171 @@
-/* ========== My Books Page - Mobile-First Layout ========== */
-
 .container {
   min-height: 100vh;
-  padding: var(--space-4);
-  padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-bottom) + var(--space-4));
   background: var(--color-bg-base);
+  padding: var(--space-4);
+  padding-bottom: calc(var(--bottom-nav-height) + var(--space-6));
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-/* Desktop - more padding */
-@media (min-width: 768px) {
-  .container {
-    padding: var(--space-6);
-    padding-bottom: var(--space-6);
-  }
+/* ========== Page Header ========== */
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
 }
 
-/* ========== Header - Hide on mobile (using global Header) ========== */
-.header {
-  display: none;
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pageTitle {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.searchRow {
+  display: flex;
 }
 
 .searchBox {
   flex: 1;
-  max-width: 400px;
+  max-width: 320px;
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
+  position: relative;
   background: var(--color-surface);
   border-radius: var(--radius-full);
   box-shadow: var(--shadow-neu-raised-sm);
 }
 
-.searchBox svg {
+.searchBox:focus-within {
+  box-shadow: var(--focus-ring);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
   color: var(--color-text-tertiary);
-  flex-shrink: 0;
+  pointer-events: none;
 }
 
 .searchInput {
   flex: 1;
+  height: 40px;
+  padding: 0 44px 0 36px;
   border: none;
-  background: none;
+  background: transparent;
+  outline: none;
   font-size: var(--text-sm);
   color: var(--color-text-primary);
-  outline: none;
+  font-family: var(--font-sans);
 }
 
 .searchInput::placeholder {
-  color: var(--color-text-tertiary);
+  color: var(--color-text-muted);
 }
 
-.headerRight {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.iconBtn {
-  width: 44px;
-  height: 44px;
+.addBtn {
+  position: absolute;
+  right: 4px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-surface);
+  background: var(--color-accent);
   border: none;
   border-radius: var(--radius-full);
-  color: var(--color-text-secondary);
+  color: white;
   cursor: pointer;
-  box-shadow: var(--shadow-neu-raised-sm);
   transition: all var(--transition-base);
 }
 
-.iconBtn:hover {
-  color: var(--color-accent);
-  transform: scale(1.05);
+.addBtn:hover {
+  background: var(--color-accent-dark);
 }
 
-.userProfile {
-  display: flex;
+/* Mobile - full width search */
+@media (max-width: 480px) {
+  .searchBox {
+    max-width: 100%;
+  }
+
+  .pageTitle {
+    font-size: var(--text-lg);
+  }
+}
+
+/* Mobile - reduce padding */
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+
+  .headerLeft {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .pageTitle {
+    font-size: var(--text-xl);
+  }
+
+  .searchBox {
+    max-width: none;
+  }
+
+  .headerRight {
+    display: none;
+    /* Hide on mobile, use FAB instead */
+  }
+}
+
+/* ========== Floating Action Button ========== */
+.fabImport {
+  position: fixed;
+  bottom: calc(var(--bottom-nav-height) + var(--space-4));
+  right: var(--space-4);
+  z-index: var(--z-sticky);
+  width: 56px;
+  height: 56px;
+  display: none;
+  /* Hidden by default */
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2);
-  background: var(--color-surface);
+  justify-content: center;
+  background: var(--color-primary);
+  color: white;
+  border: none;
   border-radius: var(--radius-full);
-  box-shadow: var(--shadow-neu-raised-sm);
-  text-decoration: none;
-  color: inherit;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg), var(--shadow-accent-glow);
+  transition: all var(--transition-base);
 }
 
-.userProfile img {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-full);
-  object-fit: cover;
+.fabImport:hover {
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: var(--shadow-xl), 0 12px 32px rgba(217, 119, 87, 0.4);
 }
 
-.userProfile span {
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--color-text-primary);
+.fabImport:active {
+  transform: scale(0.95);
+}
+
+/* Mobile - show FAB */
+@media (max-width: 768px) {
+  .fabImport {
+    display: flex;
+  }
 }
 
 .userProfilePlaceholder {
@@ -793,6 +860,10 @@
     grid-template-columns: 1fr 280px;
   }
 
+  .leftPanel {
+    display: none;
+  }
+
   .continueContent {
     flex-direction: column;
     align-items: center;
@@ -804,118 +875,183 @@
   }
 }
 
-/* Mobile landscape and small tablets */
+/* Mobile - single column layout */
 @media (max-width: 768px) {
   .container {
-    padding: var(--space-4);
-    padding-bottom: calc(100px + var(--space-4));
-  }
-
-  .header {
-    flex-wrap: wrap;
-    gap: var(--space-3);
-  }
-
-  .searchBox {
-    order: 2;
-    flex: 1 1 100%;
-    max-width: none;
-  }
-
-  .headerRight {
-    order: 1;
-    margin-left: auto;
-  }
-
-  .userProfile span {
-    display: none;
+    padding: var(--space-3);
+    padding-bottom: calc(80px + var(--space-4));
   }
 
   .mainContent {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: var(--space-4);
   }
 
-  .rightPanel {
-    order: 2;
-  }
-
+  /* Show center panel (continue reading) first */
   .centerPanel {
     order: 1;
   }
 
-  .discoverGrid {
-    grid-template-columns: repeat(3, 1fr);
+  /* Show library list second */
+  .rightPanel {
+    order: 2;
   }
 
-  .filterTabs {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
+  /* Hide left panel on mobile */
+  .leftPanel {
+    display: none;
   }
 
-  .filterTab {
-    flex: 0 0 auto;
-    padding: var(--space-2) var(--space-3);
-  }
-
-  .bookList {
-    max-height: none;
-  }
-}
-
-/* Mobile portrait */
-@media (max-width: 480px) {
-  .container {
-    padding: var(--space-3);
-    padding-bottom: calc(100px + var(--space-3));
-  }
-
+  /* Compact continue card */
   .continueCard {
     padding: var(--space-4);
   }
 
+  .continueContent {
+    flex-direction: row;
+    gap: var(--space-4);
+    align-items: center;
+    text-align: left;
+  }
+
   .continueBookCover {
-    width: 100px;
-    height: 140px;
+    width: 80px;
+    height: 110px;
+  }
+
+  .continueInfo {
+    align-items: flex-start;
   }
 
   .continueTitle {
-    font-size: var(--text-lg);
+    font-size: var(--text-base);
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
   }
 
+  .continueBtn {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-xs);
+  }
+
+  /* Compact discover grid */
   .discoverGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-2);
   }
 
   .discoverSection {
     padding: var(--space-3);
   }
 
+  /* Filter tabs scroll horizontally */
+  .filterTabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    gap: var(--space-1);
+    padding: var(--space-1);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .filterTabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filterTab {
+    flex: 0 0 auto;
+    padding: var(--space-2) var(--space-3);
+    white-space: nowrap;
+  }
+
+  /* Book list - no max height, full scroll */
+  .bookList {
+    max-height: none;
+    padding-right: 0;
+  }
+
+  /* Compact book items */
   .bookItem {
     padding: var(--space-2);
   }
 
   .bookItemCover {
-    width: 36px;
-    height: 52px;
+    width: 40px;
+    height: 56px;
   }
 
   .bookItemCoverPlaceholder {
-    width: 36px;
-    height: 52px;
+    width: 40px;
+    height: 56px;
   }
 
-  .welcomeCard,
-  .goalCard,
-  .statsGrid {
-    display: none;
+  .bookItemTitle {
+    font-size: var(--text-sm);
+  }
+
+  .bookItemAuthor {
+    font-size: 11px;
+  }
+
+  /* Empty state */
+  .emptyState {
+    padding: var(--space-6);
+  }
+
+  .emptyActions {
+    flex-direction: column;
+    gap: var(--space-2);
+    width: 100%;
+  }
+
+  .primaryBtn,
+  .secondaryBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Progress ring smaller */
+  .progressRing {
+    width: 40px;
+    height: 40px;
+    top: -4px;
+    right: -4px;
+  }
+
+  .progressPercent {
+    font-size: 9px;
+  }
+}
+
+/* Very small mobile */
+@media (max-width: 380px) {
+  .container {
+    padding: var(--space-2);
+    padding-bottom: calc(80px + var(--space-2));
+  }
+
+  .continueBookCover {
+    width: 64px;
+    height: 90px;
+  }
+
+  .discoverGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .bookItemCover,
+  .bookItemCoverPlaceholder {
+    width: 36px;
+    height: 50px;
   }
 }
 
 /* Safe area for devices with notches/home indicators */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .container {
-    padding-bottom: calc(100px + env(safe-area-inset-bottom));
+  @media (max-width: 768px) {
+    .container {
+      padding-bottom: calc(80px + env(safe-area-inset-bottom, 0));
+    }
   }
 }

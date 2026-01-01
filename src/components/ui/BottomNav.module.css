@@ -1,6 +1,5 @@
 /* ========================================
-   BOTTOM NAV - Mobile Navigation
-   Fixed bottom bar for mobile devices
+   BOTTOM NAV - Clean Mobile Navigation
    ======================================== */
 
 .nav {
@@ -10,8 +9,8 @@
     right: 0;
     z-index: var(--z-sticky);
     background: var(--color-surface);
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
-    padding-bottom: var(--safe-area-bottom);
+    border-top: 1px solid var(--color-border);
+    padding-bottom: env(safe-area-inset-bottom, 0);
     display: none;
 }
 
@@ -25,10 +24,11 @@
 .navInner {
     display: flex;
     justify-content: space-around;
-    align-items: center;
-    height: var(--bottom-nav-height);
+    align-items: stretch;
+    height: 60px;
     max-width: 500px;
     margin: 0 auto;
+    padding: 0;
 }
 
 .navItem {
@@ -36,10 +36,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--space-1);
-    padding: var(--space-2);
-    min-width: var(--touch-target);
-    min-height: var(--touch-target);
+    gap: 4px;
+    flex: 1;
+    padding: 8px 4px;
     border: none;
     background: transparent;
     color: var(--color-text-tertiary);
@@ -47,74 +46,44 @@
     font-weight: 500;
     text-decoration: none;
     cursor: pointer;
-    transition: all var(--transition-fast);
-    border-radius: var(--radius-md);
+    transition: color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.navItem:hover {
-    color: var(--color-accent);
-    background: var(--color-surface-sunken);
+.navItem:active {
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .navItem.active {
     color: var(--color-accent);
 }
 
-.navItem.active .iconWrapper {
-    background: rgba(255, 107, 84, 0.15);
-}
-
 .iconWrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-full);
-    transition: background var(--transition-fast);
+    width: 28px;
+    height: 28px;
+}
+
+.navItem.active .iconWrapper {
+    background: rgba(255, 107, 84, 0.12);
+    border-radius: var(--radius-lg);
 }
 
 .label {
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+    font-family: var(--font-sans);
+    letter-spacing: 0.02em;
 }
 
-/* Center action button (FAB) */
-.fabWrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* Spacer height for content padding */
+.navSpacer {
+    display: none;
 }
 
-.fab {
-    position: relative;
-    top: -16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 56px;
-    height: 56px;
-    border: none;
-    border-radius: var(--radius-full);
-    background: var(--color-accent);
-    color: white;
-    box-shadow: var(--shadow-accent-glow);
-    cursor: pointer;
-    transition: all var(--transition-base);
-}
-
-.fab:hover {
-    transform: scale(1.05);
-}
-
-.fab:active {
-    transform: scale(0.95);
-}
-
-/* Hide bottom padding on pages to account for nav */
 @media (max-width: 767px) {
     .navSpacer {
-        height: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
+        display: block;
+        height: calc(60px + env(safe-area-inset-bottom, 0));
     }
 }

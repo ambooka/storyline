@@ -38,23 +38,42 @@ interface AITTSState {
     error: string | null;
     currentVoice: GoogleVoice;
     speed: number;
-    usingFallback: boolean;
+    currentWordIndex: number;
+    totalWords: number;
 }
 
-export function useAITextToSpeech() {
+interface AITTSOptions {
+    onWordChange?: (wordIndex: number, word: string) => void;
+    onEnd?: () => void;
+}
+
+// Silent audio data URL to unlock audio on user gesture
+const SILENT_AUDIO = "data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYykAMBAAAAAAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYykAMBAAAAAAAAAAAAAAAAAAAA";
+
+export function useAITextToSpeech(options?: AITTSOptions) {
     const [state, setState] = useState<AITTSState>({
         isLoading: false,
         isPlaying: false,
         isPaused: false,
         error: null,
-        currentVoice: "en-US-Wavenet-D", // Deep dramatic voice default
+        currentVoice: "en-US-Wavenet-D",
         speed: 1.0,
-        usingFallback: false,
+        currentWordIndex: -1,
+        totalWords: 0,
     });
 
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const audioUrlRef = useRef<string | null>(null);
-    const speechSynthRef = useRef<SpeechSynthesisUtterance | null>(null);
+    const optionsRef = useRef(options);
+    const wordsRef = useRef<string[]>([]);
+    const wordTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const wordIndexRef = useRef(0);
+    const audioUnlockedRef = useRef(false);
+
+    // Keep options ref updated
+    useEffect(() => {
+        optionsRef.current = options;
+    }, [options]);
 
     // Cleanup on unmount
     useEffect(() => {
@@ -66,111 +85,81 @@ export function useAITextToSpeech() {
             if (audioUrlRef.current) {
                 URL.revokeObjectURL(audioUrlRef.current);
             }
-            if (typeof speechSynthesis !== "undefined") {
-                speechSynthesis.cancel();
+            if (wordTimerRef.current) {
+                clearInterval(wordTimerRef.current);
             }
         };
     }, []);
 
-    // Fallback to Web Speech API with dramatic settings
-    const speakWithFallback = useCallback((text: string) => {
-        if (typeof speechSynthesis === "undefined") {
-            setState(prev => ({ ...prev, error: "Speech synthesis not supported" }));
-            return;
+    // Unlock audio on user gesture (call this early in click handler)
+    const unlockAudio = useCallback(() => {
+        if (audioUnlockedRef.current) return;
+
+        try {
+            // Create and play silent audio to unlock
+            const audio = new Audio(SILENT_AUDIO);
+            audio.volume = 0;
+            audio.play().then(() => {
+                audioUnlockedRef.current = true;
+                audio.pause();
+            }).catch(() => {
+                // Ignore - will try again on next gesture
+            });
+        } catch {
+            // Ignore
+        }
+    }, []);
+
+    // Start word timing simulation for audio playback
+    const startWordTimer = useCallback((words: string[], speed: number) => {
+        if (wordTimerRef.current) {
+            clearInterval(wordTimerRef.current);
         }
 
-        speechSynthesis.cancel();
+        wordsRef.current = words;
+        wordIndexRef.current = 0;
 
-        const utterance = new SpeechSynthesisUtterance(text);
+        // Average word duration based on speed (roughly 150 words/minute at 1x)
+        const baseIntervalMs = 400 / speed;
 
-        // Get available voices and pick the best one
-        const voices = speechSynthesis.getVoices();
+        wordTimerRef.current = setInterval(() => {
+            const currentIndex = wordIndexRef.current;
 
-        // Prefer high-quality voices
-        const preferredVoices = [
-            "Google UK English Male",
-            "Microsoft David",
-            "Daniel",
-            "Alex",
-            "Google US English",
-            "Samantha",
-        ];
-
-        let selectedVoice = voices.find(v =>
-            preferredVoices.some(pv => v.name.includes(pv))
-        );
-
-        if (!selectedVoice) {
-            selectedVoice = voices.find(v => v.lang.startsWith("en") && v.localService);
-        }
-        if (!selectedVoice) {
-            selectedVoice = voices.find(v => v.lang.startsWith("en"));
-        }
-        if (!selectedVoice && voices.length > 0) {
-            selectedVoice = voices[0];
-        }
-
-        if (selectedVoice) {
-            utterance.voice = selectedVoice;
-        }
-
-        utterance.rate = state.speed * 0.9;
-        utterance.pitch = 0.95;
-        utterance.volume = 1.0;
-
-        utterance.onstart = () => {
-            setState(prev => ({
-                ...prev,
-                isLoading: false,
-                isPlaying: true,
-                isPaused: false,
-                usingFallback: true,
-            }));
-        };
-
-        utterance.onpause = () => {
-            setState(prev => ({ ...prev, isPaused: true }));
-        };
-
-        utterance.onresume = () => {
-            setState(prev => ({ ...prev, isPaused: false }));
-        };
-
-        utterance.onend = () => {
-            setState(prev => ({ ...prev, isPlaying: false, isPaused: false }));
-        };
-
-        utterance.onerror = (e) => {
-            // 'interrupted' is expected when cancelling speech - not an error
-            if (e.error === 'interrupted' || e.error === 'canceled') {
-                console.log("Speech interrupted (normal when switching)");
-                setState(prev => ({
-                    ...prev,
-                    isPlaying: false,
-                    isPaused: false,
-                }));
+            if (currentIndex >= words.length) {
+                if (wordTimerRef.current) {
+                    clearInterval(wordTimerRef.current);
+                    wordTimerRef.current = null;
+                }
                 return;
             }
-            console.error("Speech synthesis error:", e);
-            setState(prev => ({
-                ...prev,
-                isLoading: false,
-                isPlaying: false,
-                error: e.error || "Speech failed"
-            }));
-        };
 
-        speechSynthRef.current = utterance;
-        speechSynthesis.speak(utterance);
-        setState(prev => ({ ...prev, isPlaying: true, isLoading: false }));
-    }, [state.speed]);
+            setState(prev => ({ ...prev, currentWordIndex: currentIndex }));
 
-    // Main speak function - tries Google Cloud TTS first, falls back to Web Speech
+            if (optionsRef.current?.onWordChange && currentIndex < words.length) {
+                optionsRef.current.onWordChange(currentIndex, words[currentIndex]);
+            }
+
+            wordIndexRef.current = currentIndex + 1;
+        }, baseIntervalMs);
+    }, []);
+
+    const stopWordTimer = useCallback(() => {
+        if (wordTimerRef.current) {
+            clearInterval(wordTimerRef.current);
+            wordTimerRef.current = null;
+        }
+        wordIndexRef.current = 0;
+    }, []);
+
+    // Main speak function - Google TTS only
     const speak = useCallback(async (text: string) => {
         if (!text || text.trim().length === 0) {
             setState(prev => ({ ...prev, error: "No text to speak" }));
             return;
         }
+
+        // Unlock audio first (must be synchronous from user gesture)
+        unlockAudio();
 
         // Stop any current playback
         if (audioRef.current) {
@@ -181,30 +170,39 @@ export function useAITextToSpeech() {
             URL.revokeObjectURL(audioUrlRef.current);
             audioUrlRef.current = null;
         }
-        if (typeof speechSynthesis !== "undefined") {
-            speechSynthesis.cancel();
-        }
+        stopWordTimer();
 
-        setState(prev => ({ ...prev, isLoading: true, error: null, usingFallback: false }));
+        // Parse words for highlighting
+        const words = text.split(/\s+/).filter(w => w.length > 0);
+
+        setState(prev => ({
+            ...prev,
+            isLoading: true,
+            error: null,
+            totalWords: words.length,
+            currentWordIndex: -1,
+        }));
+
+        // Create audio element NOW (before async) to maintain user gesture context
+        const audio = new Audio();
+        audioRef.current = audio;
 
         try {
-            // Try Google Cloud TTS
+            // Call Google Cloud TTS API
             const response = await fetch("/api/ai/tts", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    text: text.slice(0, 5000),
+                    text: text.slice(0, 4000),
                     voice: state.currentVoice,
                     speed: state.speed,
-                    pitch: -2.0, // Slightly lower pitch for drama
+                    pitch: -2.0,
                 }),
             });
 
             if (!response.ok) {
-                // Any failure from Google TTS - use fallback
-                console.log("Google TTS failed with status", response.status, "- using Web Speech API fallback");
-                speakWithFallback(text);
-                return;
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || `TTS API failed: ${response.status}`);
             }
 
             // Google TTS succeeded
@@ -212,11 +210,19 @@ export function useAITextToSpeech() {
             const audioUrl = URL.createObjectURL(audioBlob);
             audioUrlRef.current = audioUrl;
 
-            const audio = new Audio(audioUrl);
-            audioRef.current = audio;
+            // Set the src on the already-created audio element
+            audio.src = audioUrl;
 
             audio.onplay = () => {
-                setState(prev => ({ ...prev, isLoading: false, isPlaying: true, isPaused: false, usingFallback: false }));
+                setState(prev => ({
+                    ...prev,
+                    isLoading: false,
+                    isPlaying: true,
+                    isPaused: false,
+                    error: null,
+                }));
+                // Start word timing simulation
+                startWordTimer(words, state.speed);
             };
 
             audio.onpause = () => {
@@ -224,56 +230,77 @@ export function useAITextToSpeech() {
             };
 
             audio.onended = () => {
-                setState(prev => ({ ...prev, isPlaying: false, isPaused: false }));
+                setState(prev => ({
+                    ...prev,
+                    isPlaying: false,
+                    isPaused: false,
+                    currentWordIndex: -1,
+                }));
+                stopWordTimer();
+                if (optionsRef.current?.onEnd) {
+                    optionsRef.current.onEnd();
+                }
             };
 
-            audio.onerror = () => {
-                console.log("Audio playback failed, using Web Speech API fallback");
-                speakWithFallback(text);
+            audio.onerror = (e) => {
+                console.error("Audio playback error:", e);
+                stopWordTimer();
+                setState(prev => ({
+                    ...prev,
+                    isLoading: false,
+                    isPlaying: false,
+                    error: "Audio playback failed",
+                }));
             };
 
+            // Load and play
+            audio.load();
             await audio.play();
 
         } catch (error) {
-            console.log("Google TTS error, using fallback:", error);
-            speakWithFallback(text);
+            console.error("Google TTS error:", error);
+            setState(prev => ({
+                ...prev,
+                isLoading: false,
+                isPlaying: false,
+                error: error instanceof Error ? error.message : "TTS failed",
+            }));
         }
-    }, [state.currentVoice, state.speed, speakWithFallback]);
+    }, [state.currentVoice, state.speed, startWordTimer, stopWordTimer, unlockAudio]);
 
     const pause = useCallback(() => {
         if (audioRef.current && !audioRef.current.paused) {
             audioRef.current.pause();
         }
-        if (typeof speechSynthesis !== "undefined" && speechSynthesis.speaking) {
-            speechSynthesis.pause();
-        }
-    }, []);
+        stopWordTimer();
+        setState(prev => ({ ...prev, isPaused: true }));
+    }, [stopWordTimer]);
 
     const resume = useCallback(() => {
         if (audioRef.current && audioRef.current.paused) {
-            audioRef.current.play();
-            setState(prev => ({ ...prev, isPaused: false }));
+            audioRef.current.play().catch(console.error);
+            // Restart word timer
+            if (wordsRef.current.length > 0) {
+                startWordTimer(wordsRef.current, state.speed);
+            }
         }
-        if (typeof speechSynthesis !== "undefined" && speechSynthesis.paused) {
-            speechSynthesis.resume();
-        }
-    }, []);
+        setState(prev => ({ ...prev, isPaused: false }));
+    }, [startWordTimer, state.speed]);
 
     const stop = useCallback(() => {
         if (audioRef.current) {
             audioRef.current.pause();
             audioRef.current.currentTime = 0;
-            audioRef.current = null;
         }
-        if (audioUrlRef.current) {
-            URL.revokeObjectURL(audioUrlRef.current);
-            audioUrlRef.current = null;
-        }
-        if (typeof speechSynthesis !== "undefined") {
-            speechSynthesis.cancel();
-        }
-        setState(prev => ({ ...prev, isPlaying: false, isPaused: false }));
-    }, []);
+        stopWordTimer();
+        setState(prev => ({
+            ...prev,
+            isPlaying: false,
+            isPaused: false,
+            error: null,
+            currentWordIndex: -1,
+        }));
+    }, [stopWordTimer]);
 
     const setVoice = useCallback((voice: GoogleVoice) => {
         setState(prev => ({ ...prev, currentVoice: voice }));
@@ -292,5 +319,6 @@ export function useAITextToSpeech() {
         stop,
         setVoice,
         setSpeed,
+        unlockAudio, // Export for early unlock on page interaction
     };
 }

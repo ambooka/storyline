@@ -28,7 +28,7 @@ import ImportModal from "@/components/ImportModal";
 import { getAllBooks, StoredBook, saveBook, deleteBook, removeDuplicateBooks } from "@/lib/epub";
 import { Book, searchAllProviders, downloadBook } from "@/lib/ebook-providers";
 import { useAuth } from "@/contexts/AuthContext";
-import { PageLayout } from "@/components/ui";
+import { PageLayout, ThemeProfileControls } from "@/components/ui";
 import styles from "./page.module.css";
 
 type FilterTab = "all" | "reading" | "finished" | "favorites";
@@ -222,35 +222,33 @@ export default function LibraryPage() {
   return (
     <PageLayout>
       <div className={styles.container}>
-        {/* Header */}
-        <header className={styles.header}>
-          <div className={styles.searchBox}>
-            <Search size={18} />
-            <input
-              type="text"
-              placeholder="Search your library..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={styles.searchInput}
-            />
+        {/* Page Header */}
+        <div className={styles.pageHeader}>
+          <div className={styles.headerTop}>
+            <h1 className={styles.pageTitle}>My Books</h1>
+            <ThemeProfileControls />
           </div>
+          <div className={styles.searchRow}>
+            <div className={styles.searchBox}>
+              <Search size={18} className={styles.searchIcon} />
+              <input
+                type="text"
+                placeholder="Search library..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={styles.searchInput}
+              />
+              <button className={styles.addBtn} onClick={() => setImportModalOpen(true)}>
+                <Plus size={18} />
+              </button>
+            </div>
+          </div>
+        </div>
 
-          <div className={styles.headerRight}>
-            <button className={styles.iconBtn} onClick={() => setImportModalOpen(true)}>
-              <Plus size={20} />
-            </button>
-            <Link href="/profile" className={styles.userProfile}>
-              {user?.photoURL ? (
-                <img src={user.photoURL} alt="Profile" />
-              ) : (
-                <div className={styles.userProfilePlaceholder}>
-                  <User size={20} />
-                </div>
-              )}
-              <span>{user?.displayName || "Sign In"}</span>
-            </Link>
-          </div>
-        </header>
+        {/* Page-specific actions - Floating FAB for mobile */}
+        <button className={styles.fabImport} onClick={() => setImportModalOpen(true)}>
+          <Plus size={24} />
+        </button>
 
         {/* Loading State */}
         {loading && (

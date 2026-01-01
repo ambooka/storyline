@@ -141,6 +141,25 @@
     overflow: hidden;
 }
 
+/* ========== Reading Progress Bar ========== */
+.readingProgressBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--reader-border);
+    z-index: 100;
+}
+
+.readingProgressFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--reader-accent), #FF8A7A);
+    transition: width 0.3s ease-out;
+    border-radius: 0 2px 2px 0;
+    box-shadow: 0 0 8px rgba(255, 107, 84, 0.5);
+}
+
 /* ========== Minimal Header ========== */
 .minimalHeader {
     position: fixed;
@@ -199,6 +218,29 @@
 .chapterLabel {
     font-size: 11px;
     color: var(--reader-text-muted);
+}
+
+.badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    background: var(--reader-accent);
+    color: white;
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(255, 107, 84, 0.4);
+}
+
+.backBtnActive {
+    background: var(--reader-accent);
+    color: white;
 }
 
 /* ========== Content Area ========== */
@@ -659,8 +701,66 @@
         width: calc(100% - var(--space-8));
     }
 
+    /* Fullscreen mobile reading experience */
+    .content {
+        padding: 56px 0 100px;
+        /* Reduced header/footer spacing */
+        background: var(--reader-bg);
+    }
+
     .epubViewer {
-        padding: var(--space-4);
-        margin: var(--space-2);
+        max-width: 100%;
+        padding: var(--space-3);
+        margin: 0;
+        background: var(--reader-bg);
+        /* Match theme background seamlessly */
+        border-radius: 0;
+    }
+
+    /* Smaller header on mobile */
+    .header {
+        height: 56px;
+        padding: 0 var(--space-3);
+    }
+
+    .bookMeta {
+        max-width: 180px;
+    }
+
+    .bookTitle {
+        font-size: var(--text-sm);
+    }
+
+    .bookAuthor {
+        display: none;
+    }
+
+    /* Smaller icon buttons on mobile */
+    .iconBtn {
+        width: 36px;
+        height: 36px;
+    }
+
+    /* Full width touch zones for easier navigation */
+    .touchZoneLeft,
+    .touchZoneRight {
+        top: 56px;
+        bottom: 100px;
+        width: 40%;
+    }
+
+    .touchZoneLeft {
+        width: 35%;
+    }
+
+    .touchZoneRight {
+        width: 35%;
+    }
+
+    /* Adjust footer for mobile */
+    .footer {
+        padding: var(--space-2) var(--space-3);
+        height: auto;
+        min-height: 60px;
     }
 }

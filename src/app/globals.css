@@ -1,7 +1,10 @@
 /* ========================================
-   STORYLINE - NEUMORPHIC DESIGN SYSTEM
-   Inspired by soft, modern UI aesthetics
+   STORYLINE - LITERARY DESIGN SYSTEM
+   Warm, inviting aesthetic for reading
    ======================================== */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Literata:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap');
 
 /* ========== CSS Reset ========== */
 *,
@@ -14,25 +17,30 @@
 
 /* ========== Root Variables ========== */
 :root {
-  /* Core Colors - Neumorphic Light Theme */
-  --color-bg-base: #E4E9F0;
-  --color-bg-light: #EEF2F7;
-  --color-bg-dark: #D1D9E6;
+  /* Core Colors - Warm Literary Theme */
+  --color-bg-base: #FAF7F2;
+  --color-bg-light: #FFFFFF;
+  --color-bg-dark: #F0EBE3;
 
   /* Card & Surface Colors */
-  --color-surface: #E4E9F0;
-  --color-surface-raised: #EAEFF5;
-  --color-surface-sunken: #D8DEE8;
+  --color-surface: #FFFFFF;
+  --color-surface-raised: #FFFFFF;
+  --color-surface-sunken: #F5F2ED;
 
-  /* Accent - Coral/Orange (PRIMARY) */
-  --color-accent: #FF6B54;
-  --color-accent-light: #FF8A78;
-  --color-accent-dark: #E85A45;
+  /* Primary - Rich Terracotta (Book spine aesthetic) */
+  --color-primary: #D97757;
+  --color-primary-light: #E8967A;
+  --color-primary-dark: #C45F3E;
 
-  /* Secondary Accent - Blue */
-  --color-secondary: #6C8EF2;
-  --color-secondary-light: #8BA6F7;
-  --color-secondary-dark: #5A7DE0;
+  /* Legacy accent (for compatibility) */
+  --color-accent: #D97757;
+  --color-accent-light: #E8967A;
+  --color-accent-dark: #C45F3E;
+
+  /* Secondary - Deep Teal (Vintage library) */
+  --color-secondary: #2C7A7B;
+  --color-secondary-light: #38A3A5;
+  --color-secondary-dark: #1F5353;
 
   /* Status Colors */
   --color-success: #22C55E;
@@ -48,41 +56,42 @@
   --color-info-light: #60A5FA;
   --color-info-dark: #2563EB;
 
-  /* Text Colors */
-  --color-text-primary: #2D3748;
-  --color-text-secondary: #4A5568;
-  --color-text-tertiary: #718096;
-  --color-text-muted: #A0AEC0;
+  /* Text Colors - Softer, warmer blacks */
+  --color-text-primary: #2D231F;
+  --color-text-secondary: #5C4F47;
+  --color-text-tertiary: #8A7C71;
+  --color-text-muted: #B0A199;
   --color-text-on-accent: #FFFFFF;
 
   /* Gradients */
-  --gradient-accent: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+  --gradient-accent: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
   --gradient-secondary: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light));
   --gradient-success: linear-gradient(135deg, var(--color-success), var(--color-success-light));
   --gradient-danger: linear-gradient(135deg, var(--color-danger), var(--color-danger-light));
   --gradient-warning: linear-gradient(135deg, var(--color-warning), var(--color-warning-light));
 
-  /* Neumorphic Shadows */
-  --shadow-neu-raised:
-    8px 8px 16px rgba(163, 177, 198, 0.6),
-    -8px -8px 16px rgba(255, 255, 255, 0.8);
-  --shadow-neu-raised-sm:
-    4px 4px 8px rgba(163, 177, 198, 0.5),
-    -4px -4px 8px rgba(255, 255, 255, 0.8);
-  --shadow-neu-pressed:
-    inset 4px 4px 8px rgba(163, 177, 198, 0.6),
-    inset -4px -4px 8px rgba(255, 255, 255, 0.8);
-  --shadow-neu-flat:
-    6px 6px 12px rgba(163, 177, 198, 0.4),
-    -6px -6px 12px rgba(255, 255, 255, 0.6);
-  --shadow-accent-glow: 0 8px 24px rgba(255, 107, 84, 0.35);
-  --shadow-success-glow: 0 8px 24px rgba(34, 197, 94, 0.35);
-  --shadow-danger-glow: 0 8px 24px rgba(239, 68, 68, 0.35);
-  --shadow-secondary-glow: 0 8px 24px rgba(108, 142, 242, 0.35);
+  /* Modern Shadows - Softer, more natural */
+  --shadow-xs: 0 1px 2px rgba(45, 35, 31, 0.04);
+  --shadow-sm: 0 2px 4px rgba(45, 35, 31, 0.06), 0 1px 2px rgba(45, 35, 31, 0.04);
+  --shadow-md: 0 4px 8px rgba(45, 35, 31, 0.08), 0 2px 4px rgba(45, 35, 31, 0.04);
+  --shadow-lg: 0 8px 16px rgba(45, 35, 31, 0.10), 0 4px 8px rgba(45, 35, 31, 0.06);
+  --shadow-xl: 0 16px 32px rgba(45, 35, 31, 0.12), 0 8px 16px rgba(45, 35, 31, 0.08);
+
+  /* Legacy neumorphic shadows (for gradual migration) */
+  --shadow-neu-raised: var(--shadow-md);
+  --shadow-neu-raised-sm: var(--shadow-sm);
+  --shadow-neu-pressed: inset 0 2px 4px rgba(45, 35, 31, 0.06);
+  --shadow-neu-flat: var(--shadow-sm);
+
+  /* Accent glows */
+  --shadow-accent-glow: 0 8px 24px rgba(217, 119, 87, 0.25);
+  --shadow-success-glow: 0 8px 24px rgba(34, 197, 94, 0.25);
+  --shadow-danger-glow: 0 8px 24px rgba(239, 68, 68, 0.25);
+  --shadow-secondary-glow: 0 8px 24px rgba(44, 122, 123, 0.25);
 
   /* Focus Ring */
-  --focus-ring: 0 0 0 3px rgba(255, 107, 84, 0.4);
-  --focus-ring-secondary: 0 0 0 3px rgba(108, 142, 242, 0.4);
+  --focus-ring: 0 0 0 3px rgba(217, 119, 87, 0.3);
+  --focus-ring-secondary: 0 0 0 3px rgba(44, 122, 123, 0.3);
 
   /* Icon Sizes */
   --icon-xs: 14px;
@@ -103,17 +112,18 @@
   --space-12: 3rem;
   --space-16: 4rem;
 
-  /* Border Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-2xl: 32px;
-  --radius-3xl: 40px;
+  /* Border Radius - Slightly softer */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --radius-3xl: 36px;
   --radius-full: 9999px;
 
-  /* Typography */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Typography - Literary Stack */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-reading: 'Literata', Georgia, serif;
 
   --text-xs: 0.75rem;
@@ -800,4 +810,99 @@ body {
       rgba(255, 255, 255, 0.1) 50%,
       transparent 100%);
   animation: shimmer 2s infinite;
+}
+
+/* ========== Material Design 3 Responsive Utilities ========== */
+
+/* Responsive Container */
+.md-container {
+  width: 100%;
+  margin: 0 auto;
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+/* MD3 Breakpoints: Compact (0-599), Medium (600-839), Expanded (840+) */
+@media (min-width: 600px) {
+  .md-container {
+    max-width: 600px;
+    padding-left: var(--space-6);
+    padding-right: var(--space-6);
+  }
+}
+
+@media (min-width: 840px) {
+  .md-container {
+    max-width: 1200px;
+  }
+}
+
+/* Visibility helpers */
+.hide-mobile {
+  display: none !important;
+}
+
+.show-mobile {
+  display: block !important;
+}
+
+@media (min-width: 600px) {
+  .hide-mobile {
+    display: block !important;
+  }
+
+  .show-mobile {
+    display: none !important;
+  }
+}
+
+/* Touch target helper - ensures 48px minimum */
+.touch-target {
+  min-width: 48px;
+  min-height: 48px;
+}
+
+/* Mobile stack - vertical on mobile, horizontal on desktop */
+.stack-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+@media (min-width: 600px) {
+  .stack-mobile {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* Full width on mobile */
+.full-mobile {
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .full-mobile {
+    width: auto;
+  }
+}
+
+/* Padding utilities accounting for safe areas */
+.safe-bottom {
+  padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0));
+}
+
+.safe-top {
+  padding-top: calc(var(--space-4) + env(safe-area-inset-top, 0));
+}
+
+/* Mobile text sizes */
+@media (max-width: 599px) {
+  .text-responsive-xl {
+    font-size: var(--text-xl) !important;
+  }
+
+  .text-responsive-lg {
+    font-size: var(--text-lg) !important;
+  }
 }

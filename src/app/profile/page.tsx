@@ -25,7 +25,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { BADGES } from "@/lib/gamification";
 import { getAllBooks, StoredBook } from "@/lib/epub";
-import { PageLayout } from "@/components/ui";
+import { PageLayout, ThemeToggle } from "@/components/ui";
 import styles from "./page.module.css";
 
 const containerVariants = {
@@ -192,12 +192,15 @@ export default function ProfilePage() {
                         <p className={styles.bio}>{displayUser.bio}</p>
                     </div>
 
-                    <button
-                        className={styles.settingsBtn}
-                        onClick={() => setShowSettings(!showSettings)}
-                    >
-                        {showSettings ? <X size={20} /> : <Settings size={20} />}
-                    </button>
+                    <div className={styles.headerActions}>
+                        <ThemeToggle />
+                        <button
+                            className={styles.settingsBtn}
+                            onClick={() => setShowSettings(!showSettings)}
+                        >
+                            {showSettings ? <X size={20} /> : <Settings size={20} />}
+                        </button>
+                    </div>
                 </div>
 
                 {/* Quick Stats */}

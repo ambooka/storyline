@@ -1,6 +1,7 @@
 .sidebar {
     width: 200px;
-    padding: var(--space-8) var(--space-6);
+    padding: var(--space-6) var(--space-6) var(--space-8) var(--space-6);
+    padding-top: var(--safe-area-top);
     display: flex;
     flex-direction: column;
     gap: var(--space-8);
@@ -58,16 +59,17 @@
 }
 
 .navItemActive {
-    color: var(--color-accent);
+    color: var(--color-primary);
     background: var(--color-surface);
-    box-shadow: var(--shadow-neu-raised-sm);
+    box-shadow: var(--shadow-sm);
 }
 
 /* Responsive */
 @media (max-width: 1199px) {
     .sidebar {
         width: 80px;
-        padding: var(--space-6) var(--space-3);
+        padding: var(--space-4) var(--space-3) var(--space-6) var(--space-3);
+        padding-top: calc(var(--safe-area-top) + var(--space-4));
         align-items: center;
     }
 

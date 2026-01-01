@@ -4,9 +4,11 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
+    ChevronLeft,
     ArrowLeft,
     BookOpen,
     Loader2,
+    MessageCircle,
 } from "lucide-react";
 import { useReaderStore, ThemeMode, FontFamily } from "@/stores/readerStore";
 import { getBook, StoredBook, EpubParser, updateBookProgress } from "@/lib/epub";
@@ -14,7 +16,8 @@ import { getBookFromCache } from "@/lib/cache";
 import { ReaderToolbar } from "@/components/reader/ReaderToolbar";
 import { ReaderContextMenu } from "@/components/reader/ReaderContextMenu";
 import { CollaborativeReader } from "@/components/collaborative";
-import { useTextToSpeech } from "@/lib/audio";
+import { CommentsPanel } from "@/components/reader/CommentsPanel";
+import { useAITextToSpeech } from "@/lib/ai-tts";
 import styles from "./page.module.css";
 
 export default function ReaderPage() {
@@ -47,9 +50,14 @@ export default function ReaderPage() {
 
     // Context menu state
     const [contextMenu, setContextMenu] = useState<{
-        position: { x: number; y: number } | null;
+        isOpen: boolean;
+        position: { x: number; y: number; } | null;
         selectedText: string;
-    }>({ position: null, selectedText: "" });
+    }>({
+        isOpen: false,
+        position: null,
+        selectedText: "",
+    });
 
     // Reactions storage
     const [reactions, setReactions] = useState<Array<{
@@ -59,8 +67,63 @@ export default function ReaderPage() {
         timestamp: number;
     }>>([]);
 
-    // TTS hook
-    const tts = useTextToSpeech();
+    // TTS hook with word tracking
+    const [highlightedWordIndex, setHighlightedWordIndex] = useState(-1);
+    const [autoPageTurn, setAutoPageTurn] = useState(true);
+    const [showCommentsPanel, setShowCommentsPanel] = useState(false);
+
+    const tts = useAITextToSpeech({
+        onWordChange: (wordIndex, word) => {
+            setHighlightedWordIndex(wordIndex);
+            highlightWordInIframe(wordIndex);
+        },
+        onEnd: () => {
+            // Auto-turn page if enabled and more content exists
+            if (autoPageTurn && parserRef.current) {
+                handleNextPage();
+                // Continue reading on new page after short delay
+                setTimeout(() => {
+                    extractPageText();
+                }, 300);
+            }
+        }
+    });
+
+    // Highlight word in iframe and scroll to it
+    const highlightWordInIframe = useCallback((index: number) => {
+        const iframe = viewerRef.current?.querySelector('iframe');
+        if (!iframe?.contentDocument) return;
+
+        // Remove previous highlight
+        const prevHighlight = iframe.contentDocument.querySelector('.tts-highlight');
+        prevHighlight?.classList.remove('tts-highlight');
+
+        // Add highlight to current word
+        const wordEl = iframe.contentDocument.querySelector(`[data-word-index="${index}"]`);
+        if (wordEl) {
+            wordEl.classList.add('tts-highlight');
+            wordEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }, []);
+
+    // Sync highlight state with iframe (backup method)
+    useEffect(() => {
+        if (highlightedWordIndex >= 0) {
+            highlightWordInIframe(highlightedWordIndex);
+        }
+    }, [highlightedWordIndex, highlightWordInIframe]);
+
+    // Clear highlights when not playing
+    useEffect(() => {
+        if (!tts.isPlaying && highlightedWordIndex >= 0) {
+            const iframe = viewerRef.current?.querySelector('iframe');
+            if (iframe?.contentDocument) {
+                const prevHighlight = iframe.contentDocument.querySelector('.tts-highlight');
+                prevHighlight?.classList.remove('tts-highlight');
+            }
+            setHighlightedWordIndex(-1);
+        }
+    }, [tts.isPlaying, highlightedWordIndex]);
 
     // Load reactions from localStorage
     useEffect(() => {
@@ -82,6 +145,49 @@ export default function ReaderPage() {
         setReactions(updated);
         localStorage.setItem(`reactions_${bookId}`, JSON.stringify(updated));
     }, [bookId, currentCfi, reactions]);
+
+    // Delete reaction
+    const deleteReaction = useCallback((index: number) => {
+        const updated = reactions.filter((_, i) => i !== index);
+        setReactions(updated);
+        localStorage.setItem(`reactions_${bookId}`, JSON.stringify(updated));
+    }, [bookId, reactions]);
+
+    // Comments management  
+    const [comments, setComments] = useState<Array<{
+        id: string;
+        cfi: string;
+        text: string;
+        note?: string;
+        timestamp: number;
+    }>>([]);
+
+    // Load comments from localStorage
+    useEffect(() => {
+        const stored = localStorage.getItem(`comments_${bookId}`);
+        if (stored) {
+            setComments(JSON.parse(stored));
+        }
+    }, [bookId]);
+
+    const addComment = useCallback((text: string, note?: string) => {
+        const newComment = {
+            id: crypto.randomUUID(),
+            cfi: currentCfi,
+            text: text.slice(0, 200),
+            note,
+            timestamp: Date.now(),
+        };
+        const updated = [...comments, newComment];
+        setComments(updated);
+        localStorage.setItem(`comments_${bookId}`, JSON.stringify(updated));
+    }, [bookId, currentCfi, comments]);
+
+    const deleteComment = useCallback((id: string) => {
+        const updated = comments.filter(c => c.id !== id);
+        setComments(updated);
+        localStorage.setItem(`comments_${bookId}`, JSON.stringify(updated));
+    }, [bookId, comments]);
 
     // Load book from IndexedDB
     useEffect(() => {
@@ -139,9 +245,15 @@ export default function ReaderPage() {
 
                         applyTheme(theme);
 
+                        // Inject word wrapping for TTS highlighting
+                        parser.injectWordWrapping();
+
                         if (storedBook.currentCfi) {
+                            console.log(`Restoring progress: ${storedBook.progress}% at CFI: ${storedBook.currentCfi}`);
                             await parser.goTo(storedBook.currentCfi);
                             setCurrentCfi(storedBook.currentCfi);
+                        } else {
+                            console.log('No saved progress found, starting from beginning');
                         }
 
                         parser.onRelocated((location) => {
@@ -296,6 +408,7 @@ export default function ReaderPage() {
         const finalText = selectedText || iframeText;
 
         setContextMenu({
+            isOpen: true,
             position: { x: e.clientX, y: e.clientY },
             selectedText: finalText,
         });
@@ -322,6 +435,7 @@ export default function ReaderPage() {
                     const y = e.clientY + rect.top;
 
                     setContextMenu({
+                        isOpen: true,
                         position: { x, y },
                         selectedText,
                     });
@@ -449,18 +563,42 @@ export default function ReaderPage() {
             className={`${styles.readerPage} ${styles[`theme${theme.charAt(0).toUpperCase() + theme.slice(1)}`]}`}
             onContextMenu={handleContextMenu}
         >
-            {/* Minimal Header */}
-            <header className={styles.minimalHeader}>
-                <button className={styles.backBtn} onClick={() => router.push("/")}>
-                    <ArrowLeft size={18} />
-                </button>
-                <div className={styles.headerMeta}>
-                    <h1 className={styles.bookTitle}>{book?.title || "Untitled"}</h1>
-                    <span className={styles.chapterLabel}>{currentChapter}</span>
-                </div>
-            </header>
+            {/* Reading Progress Bar */}
+            <div className={styles.readingProgressBar}>
+                <div
+                    className={styles.readingProgressFill}
+                    style={{ width: `${progress}%` }}
+                />
+            </div>
 
-            {/* ePub Content */}
+            {/* Minimal Back Button */}
+            <div className={styles.minimalHeader}>
+                <button
+                    className={styles.backBtn}
+                    onClick={() => router.push("/")}
+                >
+                    <ChevronLeft size={20} />
+                </button>
+
+                {book && (
+                    <div className={styles.headerMeta}>
+                        <span className={styles.bookTitle}>{book.title}</span>
+                        <span className={styles.chapterLabel}>{currentChapter}</span>
+                    </div>
+                )}
+
+                {/* Floating Comments/Reactions Button */}
+                <button
+                    className={`${styles.backBtn} ${showCommentsPanel ? styles.backBtnActive : ""}`}
+                    onClick={() => setShowCommentsPanel(!showCommentsPanel)}
+                    style={{ marginLeft: "auto" }}
+                >
+                    <MessageCircle size={20} />
+                    {(reactions.length + comments.length) > 0 && (
+                        <span className={styles.badge}>{reactions.length + comments.length}</span>
+                    )}
+                </button>
+            </div> {/* ePub Content */}
             <main className={styles.content}>
                 <div
                     ref={viewerRef}
@@ -491,26 +629,44 @@ export default function ReaderPage() {
                 currentChapter={currentChapter}
                 onPrevPage={handlePrevPage}
                 onNextPage={handleNextPage}
+                autoPageTurn={autoPageTurn}
+                onAutoPageTurnChange={setAutoPageTurn}
             />
 
             {/* Custom Context Menu */}
-            <AnimatePresence>
-                {contextMenu.position && (
-                    <ReaderContextMenu
-                        position={contextMenu.position}
-                        selectedText={contextMenu.selectedText}
-                        onClose={() => setContextMenu({ position: null, selectedText: "" })}
-                        onCopy={handleCopy}
-                        onHighlight={handleHighlight}
-                        onReact={handleReact}
-                        onNote={handleNote}
-                        onSpeak={handleSpeak}
-                        onSearch={handleSearch}
-                        onShare={handleShare}
-                        onBookmark={handleToggleBookmark}
-                    />
-                )}
-            </AnimatePresence>
+            <ReaderContextMenu
+                position={contextMenu.isOpen ? contextMenu.position : null}
+                selectedText={contextMenu.selectedText}
+                onSpeak={() => {
+                    if (contextMenu.selectedText) {
+                        tts.speak(contextMenu.selectedText);
+                    }
+                    setContextMenu(prev => ({ ...prev, isOpen: false, position: null }));
+                }}
+                onHighlight={(color) => {
+                    handleHighlight(color);
+                    setContextMenu(prev => ({ ...prev, isOpen: false, position: null }));
+                }}
+                onReact={(emoji: string) => {
+                    if (contextMenu.selectedText) {
+                        saveReaction(emoji, contextMenu.selectedText);
+                    }
+                    setContextMenu(prev => ({ ...prev, isOpen: false, position: null }));
+                }}
+                onNote={() => {
+                    // Show comments panel when note is clicked
+                    if (contextMenu.selectedText) {
+                        addComment(contextMenu.selectedText);
+                        setShowCommentsPanel(true);
+                    }
+                    setContextMenu(prev => ({ ...prev, isOpen: false, position: null }));
+                }}
+                onCopy={handleCopy}
+                onSearch={handleSearch}
+                onShare={handleShare}
+                onBookmark={handleToggleBookmark}
+                onClose={() => setContextMenu(prev => ({ ...prev, isOpen: false, position: null }))}
+            />
 
             {/* Collaborative Reading */}
             {book && (
@@ -523,6 +679,21 @@ export default function ReaderPage() {
                     selectedText={contextMenu.selectedText}
                 />
             )}
+
+            {/* Comments Panel */}
+            <AnimatePresence>
+                {showCommentsPanel && (
+                    <CommentsPanel
+                        bookId={bookId}
+                        comments={comments}
+                        reactions={reactions}
+                        onAddComment={addComment}
+                        onDeleteComment={deleteComment}
+                        onDeleteReaction={deleteReaction}
+                        onClose={() => setShowCommentsPanel(false)}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 }

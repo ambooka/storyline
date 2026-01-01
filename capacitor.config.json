@@ -26,11 +26,10 @@
     "android": {
         "allowMixedContent": true,
         "captureInput": true,
-        "webContentsDebuggingEnabled": false
+        "webContentsDebuggingEnabled": true
     },
     "server": {
-        "hostname": "storyline.app",
-        "androidScheme": "https",
-        "iosScheme": "https"
+        "url": "https://storyline-app.vercel.app",
+        "cleartext": false
     }
 }

@@ -37,6 +37,8 @@ export { SearchBar } from "./SearchBar";
 export { Sidebar } from "./Sidebar";
 export { MobileNav } from "./MobileNav";
 export { PageLayout } from "./PageLayout";
+export { ThemeProfileControls } from "./ThemeProfileControls";
+export { ThemeToggle } from "./ThemeToggle";
 export { Header } from "./Header";
 export { BottomNav } from "./BottomNav";
 

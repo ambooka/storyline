@@ -10,8 +10,9 @@ import {
     Globe,
     X,
     Loader2,
+    Search,
 } from "lucide-react";
-import { PageLayout, SearchBar } from "@/components/ui";
+import { PageLayout, ThemeProfileControls } from "@/components/ui";
 import styles from "./page.module.css";
 
 // Types
@@ -149,20 +150,24 @@ export default function ClubsPage() {
         <PageLayout>
             {/* Header */}
             <header className={styles.header}>
-                <div className={styles.headerLeft}>
+                <div className={styles.headerTop}>
                     <h1>Book Clubs</h1>
-                    <p className={styles.subtitle}>Read together, discuss together</p>
+                    <ThemeProfileControls />
                 </div>
-                <div className={styles.headerRight}>
-                    <SearchBar
-                        value={searchQuery}
-                        onChange={setSearchQuery}
-                        placeholder="Search clubs..."
-                    />
-                    <button className={styles.createBtn} onClick={() => setShowCreateModal(true)}>
-                        <Plus size={18} />
-                        Create Club
-                    </button>
+                <div className={styles.searchRow}>
+                    <div className={styles.searchBox}>
+                        <Search size={18} className={styles.searchIcon} />
+                        <input
+                            type="text"
+                            placeholder="Search clubs..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className={styles.searchInput}
+                        />
+                        <button className={styles.createBtn} onClick={() => setShowCreateModal(true)}>
+                            <Plus size={18} />
+                        </button>
+                    </div>
                 </div>
             </header>
 

@@ -1,0 +1,30 @@
+.soundWave {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    height: 100%;
+}
+
+.bar {
+    width: 2px;
+    height: 100%;
+    background: currentColor;
+    border-radius: 2px;
+    animation: wave 0.8s ease-in-out infinite;
+    transform-origin: center;
+}
+
+@keyframes wave {
+
+    0%,
+    100% {
+        transform: scaleY(0.3);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: scaleY(1);
+        opacity: 1;
+    }
+}

@@ -18,7 +18,7 @@ import {
     CheckCircle,
     AlertCircle,
 } from "lucide-react";
-import { PageLayout } from "@/components/ui";
+import { PageLayout, ThemeProfileControls } from "@/components/ui";
 import { saveBook } from "@/lib/epub";
 import {
     Book,
@@ -32,6 +32,7 @@ import styles from "./page.module.css";
 
 interface DownloadState {
     status: 'idle' | 'downloading' | 'success' | 'error';
+    progress?: number; // 0-100 percentage
     error?: string;
 }
 
@@ -67,6 +68,130 @@ const SUGGESTIONS = [
     "Dracula",
 ];
 
+// Fallback popular books with verified working download URLs
+const FALLBACK_BOOKS: Book[] = [
+    {
+        id: 'gutenberg-1342',
+        title: 'Pride and Prejudice',
+        author: 'Jane Austen',
+        authors: ['Jane Austen'],
+        cover: 'https://www.gutenberg.org/cache/epub/1342/pg1342.cover.medium.jpg',
+        description: 'A romantic novel following the emotional development of Elizabeth Bennet.',
+        subjects: ['Fiction', 'Romance', 'Classic'],
+        languages: ['en'],
+        downloadUrl: 'https://www.gutenberg.org/cache/epub/1342/pg1342-images.epub',
+        formats: [{ mimeType: 'application/epub+zip', url: 'https://www.gutenberg.org/cache/epub/1342/pg1342-images.epub', label: 'EPUB' }],
+        source: 'gutenberg',
+        downloadCount: 100000,
+        publishedYear: 1813,
+    },
+    {
+        id: 'gutenberg-84',
+        title: 'Frankenstein',
+        author: 'Mary Shelley',
+        authors: ['Mary Shelley'],
+        cover: 'https://www.gutenberg.org/cache/epub/84/pg84.cover.medium.jpg',
+        description: 'The story of Victor Frankenstein and the monster he created.',
+        subjects: ['Fiction', 'Horror', 'Classic'],
+        languages: ['en'],
+        downloadUrl: 'https://www.gutenberg.org/cache/epub/84/pg84-images.epub',
+        formats: [{ mimeType: 'application/epub+zip', url: 'https://www.gutenberg.org/cache/epub/84/pg84-images.epub', label: 'EPUB' }],
+        source: 'gutenberg',
+        downloadCount: 50000,
+        publishedYear: 1818,
+    },
+    {
+        id: 'gutenberg-345',
+        title: 'Dracula',
+        author: 'Bram Stoker',
+        authors: ['Bram Stoker'],
+        cover: 'https://www.gutenberg.org/cache/epub/345/pg345.cover.medium.jpg',
+        description: 'The classic vampire novel.',
+        subjects: ['Fiction', 'Horror', 'Gothic'],
+        languages: ['en'],
+        downloadUrl: 'https://www.gutenberg.org/cache/epub/345/pg345-images.epub',
+        formats: [{ mimeType: 'application/epub+zip', url: 'https://www.gutenberg.org/cache/epub/345/pg345-images.epub', label: 'EPUB' }],
+        source: 'gutenberg',
+        downloadCount: 45000,
+        publishedYear: 1897,
+    },
+    {
+        id: 'gutenberg-2701',
+        title: 'Moby Dick',
+        author: 'Herman Melville',
+        authors: ['Herman Melville'],
+        cover: 'https://www.gutenberg.org/cache/epub/2701/pg2701.cover.medium.jpg',
+        description: 'The epic tale of Captain Ahab and the white whale.',
+        subjects: ['Fiction', 'Adventure', 'Classic'],
+        languages: ['en'],
+        downloadUrl: 'https://www.gutenberg.org/cache/epub/2701/pg2701-images.epub',
+        formats: [{ mimeType: 'application/epub+zip', url: 'https://www.gutenberg.org/cache/epub/2701/pg2701-images.epub', label: 'EPUB' }],
+        source: 'gutenberg',
+        downloadCount: 40000,
+        publishedYear: 1851,
+    },
+    {
+        id: 'gutenberg-1661',
+        title: 'The Adventures of Sherlock Holmes',
+        author: 'Arthur Conan Doyle',
+        authors: ['Arthur Conan Doyle'],
+        cover: 'https://www.gutenberg.org/cache/epub/1661/pg1661.cover.medium.jpg',
+        description: 'A collection of twelve short stories featuring the famous detective.',
+        subjects: ['Fiction', 'Mystery', 'Detective'],
+        languages: ['en'],
+        downloadUrl: 'https://www.gutenberg.org/cache/epub/1661/pg1661-images.epub',
+        formats: [{ mimeType: 'application/epub+zip', url: 'https://www.gutenberg.org/cache/epub/1661/pg1661-images.epub', label: 'EPUB' }],
+        source: 'gutenberg',
+        downloadCount: 60000,
+        publishedYear: 1892,
+    },
+    {
+        id: 'gutenberg-11',
+        title: "Alice's Adventures in Wonderland",
+        author: 'Lewis Carroll',
+        authors: ['Lewis Carroll'],
+        cover: 'https://www.gutenberg.org/cache/epub/11/pg11.cover.medium.jpg',
+        description: "The classic tale of Alice's journey through Wonderland.",
+        subjects: ['Fiction', 'Fantasy', 'Children'],
+        languages: ['en'],
+        downloadUrl: 'https://www.gutenberg.org/cache/epub/11/pg11-images.epub',
+        formats: [{ mimeType: 'application/epub+zip', url: 'https://www.gutenberg.org/cache/epub/11/pg11-images.epub', label: 'EPUB' }],
+        source: 'gutenberg',
+        downloadCount: 55000,
+        publishedYear: 1865,
+    },
+    {
+        id: 'gutenberg-1232',
+        title: 'The Prince',
+        author: 'Niccolò Machiavelli',
+        authors: ['Niccolò Machiavelli'],
+        cover: 'https://www.gutenberg.org/cache/epub/1232/pg1232.cover.medium.jpg',
+        description: 'A political treatise on statecraft and power.',
+        subjects: ['Political Science', 'Philosophy', 'Classic'],
+        languages: ['en'],
+        downloadUrl: 'https://www.gutenberg.org/cache/epub/1232/pg1232-images.epub',
+        formats: [{ mimeType: 'application/epub+zip', url: 'https://www.gutenberg.org/cache/epub/1232/pg1232-images.epub', label: 'EPUB' }],
+        source: 'gutenberg',
+        downloadCount: 35000,
+        publishedYear: 1532,
+    },
+    {
+        id: 'gutenberg-174',
+        title: 'The Picture of Dorian Gray',
+        author: 'Oscar Wilde',
+        authors: ['Oscar Wilde'],
+        cover: 'https://www.gutenberg.org/cache/epub/174/pg174.cover.medium.jpg',
+        description: 'A philosophical novel about beauty, corruption, and moral depravity.',
+        subjects: ['Fiction', 'Gothic', 'Classic'],
+        languages: ['en'],
+        downloadUrl: 'https://www.gutenberg.org/cache/epub/174/pg174-images.epub',
+        formats: [{ mimeType: 'application/epub+zip', url: 'https://www.gutenberg.org/cache/epub/174/pg174-images.epub', label: 'EPUB' }],
+        source: 'gutenberg',
+        downloadCount: 42000,
+        publishedYear: 1890,
+    },
+];
+
 // ============ Animation Variants ============
 
 const containerVariants = {
@@ -93,10 +218,10 @@ export default function ExplorePage() {
 
     // Search state
     const [query, setQuery] = useState("");
-    const [results, setResults] = useState<Book[]>([]);
+    const [results, setResults] = useState<Book[]>(FALLBACK_BOOKS);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [totalCount, setTotalCount] = useState(0);
+    const [totalCount, setTotalCount] = useState(FALLBACK_BOOKS.length);
     const [hasSearched, setHasSearched] = useState(false);
 
     // Filter state
@@ -109,6 +234,8 @@ export default function ExplorePage() {
 
     // Saved books
     const [savedBooks, setSavedBooks] = useState<Set<string>>(new Set());
+
+    // Fallback books are already loaded via initial state, no need to fetch on mount
 
     // Count active filters
     const activeFilterCount = Object.values(filters).filter(v => v && v !== 'all').length;
@@ -126,7 +253,9 @@ export default function ExplorePage() {
 
     const performSearch = useCallback(async (searchQuery: string) => {
         if (!searchQuery.trim()) {
-            setResults([]);
+            // Show fallback books when no query instead of empty
+            setResults(FALLBACK_BOOKS);
+            setTotalCount(FALLBACK_BOOKS.length);
             setHasSearched(false);
             return;
         }
@@ -142,12 +271,22 @@ export default function ExplorePage() {
                 source: filters.source === 'all' ? undefined : filters.source as 'gutenberg' | 'openlibrary' | 'internetarchive',
             });
 
-            setResults(response.books);
-            setTotalCount(response.totalCount);
+            if (response.books.length > 0) {
+                console.log(`Search returned ${response.books.length} books:`, response.books.map(b => b.title));
+                setResults(response.books);
+                setTotalCount(response.totalCount);
+            } else {
+                // No results found, show fallback
+                setResults(FALLBACK_BOOKS);
+                setTotalCount(FALLBACK_BOOKS.length);
+                setError('No books found for that search. Showing popular classics instead.');
+            }
         } catch (err) {
             console.error('Search error:', err);
-            setError('Search failed. Please try again.');
-            setResults([]);
+            setError('Search failed. Showing popular classics instead.');
+            // Use fallback books on error instead of empty
+            setResults(FALLBACK_BOOKS);
+            setTotalCount(FALLBACK_BOOKS.length);
         } finally {
             setLoading(false);
         }
@@ -197,8 +336,8 @@ export default function ExplorePage() {
             return;
         }
 
-        // 1. Set downloading state
-        updateDownloadState(bookId, { status: 'downloading' });
+        // 1. Set downloading state with 0 progress
+        updateDownloadState(bookId, { status: 'downloading', progress: 0 });
 
         try {
             // 2. Check if we have a download URL
@@ -206,11 +345,60 @@ export default function ExplorePage() {
                 throw new Error('No direct download available');
             }
 
-            // 3. Download via existing proxy
             console.log(`Downloading: ${book.title} from ${book.downloadUrl}`);
-            const arrayBuffer = await downloadBook(book);
 
-            if (!arrayBuffer || arrayBuffer.byteLength < 1000) {
+            // 3. Download via proxy with progress tracking
+            const proxyUrl = `/api/download?url=${encodeURIComponent(book.downloadUrl)}`;
+            const response = await fetch(proxyUrl);
+
+            if (!response.ok) {
+                throw new Error(`Download failed: ${response.status}`);
+            }
+
+            // Get content length for progress calculation
+            const contentLength = response.headers.get('content-length');
+            const totalBytes = contentLength ? parseInt(contentLength, 10) : 0;
+
+            if (!response.body) {
+                throw new Error('No response body');
+            }
+
+            // Use ReadableStream to track progress
+            const reader = response.body.getReader();
+            const chunks: Uint8Array[] = [];
+            let receivedBytes = 0;
+
+            while (true) {
+                const { done, value } = await reader.read();
+
+                if (done) break;
+
+                chunks.push(value);
+                receivedBytes += value.length;
+
+                // Update progress
+                if (totalBytes > 0) {
+                    const progress = Math.round((receivedBytes / totalBytes) * 100);
+                    updateDownloadState(bookId, { status: 'downloading', progress });
+                } else {
+                    // Unknown size - show received bytes as "downloading"
+                    updateDownloadState(bookId, {
+                        status: 'downloading',
+                        progress: -1 // Will show as indeterminate with bytes count
+                    });
+                }
+            }
+
+            // Combine chunks into ArrayBuffer
+            const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
+            const arrayBuffer = new Uint8Array(totalLength);
+            let offset = 0;
+            for (const chunk of chunks) {
+                arrayBuffer.set(chunk, offset);
+                offset += chunk.length;
+            }
+
+            if (arrayBuffer.byteLength < 1000) {
                 throw new Error('Invalid file received');
             }
 
@@ -221,11 +409,11 @@ export default function ExplorePage() {
                 title: book.title,
                 author: book.author,
                 cover: book.cover || undefined,
-                fileData: arrayBuffer,
+                fileData: arrayBuffer.buffer,
             });
 
             // 5. Success!
-            updateDownloadState(bookId, { status: 'success' });
+            updateDownloadState(bookId, { status: 'success', progress: 100 });
 
             // Navigate to reader after brief delay
             setTimeout(() => {
@@ -273,121 +461,118 @@ export default function ExplorePage() {
             <div className={styles.container}>
                 {/* Header */}
                 <header className={styles.header}>
+                    <div className={styles.headerTop}>
+                        <h1 className={styles.pageTitle}>Explore</h1>
+                        <ThemeProfileControls />
+                    </div>
                     <div className={styles.searchSection}>
-                        <h1 className={styles.title}>📚 Explore Books</h1>
-                        <p className={styles.subtitle}>
-                            Search free ebooks from Project Gutenberg, Open Library & Archive.org
-                        </p>
-
                         <form onSubmit={handleSearch} className={styles.searchWrapper}>
                             <div className={styles.searchInputWrapper}>
-                                <Search className={styles.searchIcon} size={20} />
+                                <Search className={styles.searchIcon} size={18} />
                                 <input
                                     type="text"
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
-                                    placeholder="Search by title or author..."
+                                    placeholder="Search books..."
                                     className={styles.searchInput}
                                     data-testid="search-input"
                                 />
-                            </div>
-
-                            <button
-                                type="button"
-                                className={`${styles.filterToggle} ${showFilters ? styles.active : ''}`}
-                                onClick={() => setShowFilters(!showFilters)}
-                                aria-label="Toggle filters"
-                            >
-                                <Filter size={18} />
-                                {activeFilterCount > 0 && (
-                                    <span className={styles.filterCount}>{activeFilterCount}</span>
-                                )}
-                            </button>
-
-                            <button
-                                type="submit"
-                                className={styles.searchButton}
-                                disabled={loading || !query.trim()}
-                            >
-                                {loading ? <Loader2 size={18} className={styles.loadingSpinner} /> : 'Search'}
-                            </button>
-                        </form>
-
-                        {/* Suggestions */}
-                        {!hasSearched && (
-                            <div className={styles.suggestions}>
-                                <span className={styles.suggestionsLabel}>Try searching for:</span>
-                                <div className={styles.suggestionChips}>
-                                    {SUGGESTIONS.map(s => (
-                                        <button
-                                            key={s}
-                                            className={styles.suggestionChip}
-                                            onClick={() => handleSuggestion(s)}
-                                        >
-                                            {s}
-                                        </button>
-                                    ))}
+                                <div className={styles.searchActions}>
+                                    <button
+                                        type="button"
+                                        className={`${styles.filterBtn} ${showFilters ? styles.active : ''}`}
+                                        onClick={() => setShowFilters(!showFilters)}
+                                        aria-label="Toggle filters"
+                                    >
+                                        <Filter size={16} />
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className={styles.searchButton}
+                                        disabled={loading || !query.trim()}
+                                        aria-label="Search"
+                                    >
+                                        {loading ? <Loader2 size={16} className={styles.loadingSpinner} /> : <Search size={16} />}
+                                    </button>
                                 </div>
                             </div>
-                        )}
-
-                        {/* Filter Panel */}
-                        <AnimatePresence>
-                            {showFilters && (
-                                <motion.div
-                                    initial={{ opacity: 0, height: 0 }}
-                                    animate={{ opacity: 1, height: 'auto' }}
-                                    exit={{ opacity: 0, height: 0 }}
-                                    className={styles.filterPanel}
-                                >
-                                    <div className={styles.filterSection}>
-                                        <div className={styles.filterLabel}>Language</div>
-                                        <div className={styles.filterOptions}>
-                                            {LANGUAGES.map(lang => (
-                                                <button
-                                                    key={lang.code}
-                                                    className={`${styles.filterChip} ${tempFilters.language === lang.code ? styles.active : ''}`}
-                                                    onClick={() => setTempFilters(f => ({
-                                                        ...f,
-                                                        language: f.language === lang.code ? undefined : lang.code
-                                                    }))}
-                                                >
-                                                    {lang.name}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className={styles.filterSection}>
-                                        <div className={styles.filterLabel}>Source</div>
-                                        <div className={styles.filterOptions}>
-                                            {SOURCES.map(source => (
-                                                <button
-                                                    key={source.id}
-                                                    className={`${styles.filterChip} ${tempFilters.source === source.id ? styles.active : ''}`}
-                                                    onClick={() => setTempFilters(f => ({
-                                                        ...f,
-                                                        source: f.source === source.id ? undefined : source.id
-                                                    }))}
-                                                >
-                                                    {source.emoji} {source.name}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className={styles.filterActions}>
-                                        <button className={styles.clearFiltersBtn} onClick={clearFilters}>
-                                            <XCircle size={14} /> Clear
-                                        </button>
-                                        <button className={styles.applyFiltersBtn} onClick={applyFilters}>
-                                            Apply Filters
-                                        </button>
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                        </form>
                     </div>
+
+                    {/* Suggestions */}
+                    {!hasSearched && (
+                        <div className={styles.suggestions}>
+                            <span className={styles.suggestionsLabel}>Try searching for:</span>
+                            <div className={styles.suggestionChips}>
+                                {SUGGESTIONS.map(s => (
+                                    <button
+                                        key={s}
+                                        className={styles.suggestionChip}
+                                        onClick={() => handleSuggestion(s)}
+                                    >
+                                        {s}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Filter Panel */}
+                    <AnimatePresence>
+                        {showFilters && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className={styles.filterPanel}
+                            >
+                                <div className={styles.filterSection}>
+                                    <div className={styles.filterLabel}>Language</div>
+                                    <div className={styles.filterOptions}>
+                                        {LANGUAGES.map(lang => (
+                                            <button
+                                                key={lang.code}
+                                                className={`${styles.filterChip} ${tempFilters.language === lang.code ? styles.active : ''}`}
+                                                onClick={() => setTempFilters(f => ({
+                                                    ...f,
+                                                    language: f.language === lang.code ? undefined : lang.code
+                                                }))}
+                                            >
+                                                {lang.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className={styles.filterSection}>
+                                    <div className={styles.filterLabel}>Source</div>
+                                    <div className={styles.filterOptions}>
+                                        {SOURCES.map(source => (
+                                            <button
+                                                key={source.id}
+                                                className={`${styles.filterChip} ${tempFilters.source === source.id ? styles.active : ''}`}
+                                                onClick={() => setTempFilters(f => ({
+                                                    ...f,
+                                                    source: f.source === source.id ? undefined : source.id
+                                                }))}
+                                            >
+                                                {source.emoji} {source.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className={styles.filterActions}>
+                                    <button className={styles.clearFiltersBtn} onClick={clearFilters}>
+                                        <XCircle size={14} /> Clear
+                                    </button>
+                                    <button className={styles.applyFiltersBtn} onClick={applyFilters}>
+                                        Apply Filters
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </header>
 
                 {/* Results */}
@@ -432,22 +617,16 @@ export default function ExplorePage() {
                     )}
 
                     {/* Results Grid */}
-                    {!loading && results.length > 0 && (
-                        <motion.div
-                            className={styles.bookGrid}
-                            variants={containerVariants}
-                            initial="hidden"
-                            animate="visible"
-                        >
+                    {results.length > 0 && (
+                        <div className={styles.bookGrid}>
                             {results.map((book) => {
                                 const downloadState = downloadStates.get(book.id);
                                 const hasDirectDownload = !!book.downloadUrl;
 
                                 return (
-                                    <motion.div
+                                    <div
                                         key={book.id}
                                         className={styles.bookCard}
-                                        variants={itemVariants}
                                     >
                                         <div className={styles.bookCover}>
                                             {book.cover ? (
@@ -487,7 +666,12 @@ export default function ExplorePage() {
                                                             data-testid="download-button"
                                                         >
                                                             {downloadState?.status === 'downloading' ? (
-                                                                <><Loader2 size={14} className={styles.loadingSpinner} /></>
+                                                                <>
+                                                                    <Loader2 size={14} className={styles.loadingSpinner} />
+                                                                    {downloadState.progress !== undefined && downloadState.progress >= 0
+                                                                        ? `${downloadState.progress}%`
+                                                                        : '...'}
+                                                                </>
                                                             ) : downloadState?.status === 'success' ? (
                                                                 <><CheckCircle size={14} /> Done</>
                                                             ) : downloadState?.status === 'error' ? (
@@ -552,10 +736,10 @@ export default function ExplorePage() {
                                                 </div>
                                             )}
                                         </div>
-                                    </motion.div>
+                                    </div>
                                 );
                             })}
-                        </motion.div>
+                        </div>
                     )}
 
                     {/* External Fallback Section */}

@@ -182,17 +182,26 @@ interface TTSState {
     isPaused: boolean;
     currentWord: number;
     totalWords: number;
+    currentWordText: string;
     error: string | null;
 }
 
-export function useTextToSpeech() {
+interface TTSOptions {
+    onWordChange?: (wordIndex: number, word: string) => void;
+    onEnd?: () => void;
+}
+
+export function useTextToSpeech(options?: TTSOptions) {
     const [state, setState] = useState<TTSState>({
         isSpeaking: false,
         isPaused: false,
         currentWord: 0,
         totalWords: 0,
+        currentWordText: "",
         error: null,
     });
+
+    const optionsRef = useRef(options);
 
     const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
@@ -229,6 +238,7 @@ export function useTextToSpeech() {
                 isPaused: false,
                 currentWord: 0,
                 totalWords: words.length,
+                currentWordText: "",
                 error: null,
             });
         };
@@ -239,8 +249,14 @@ export function useTextToSpeech() {
                 isPaused: false,
                 currentWord: 0,
                 totalWords: 0,
+                currentWordText: "",
                 error: null,
             });
+
+            // Call onEnd callback
+            if (optionsRef.current?.onEnd) {
+                optionsRef.current.onEnd();
+            }
         };
 
         utterance.onerror = (e) => {
@@ -253,8 +269,14 @@ export function useTextToSpeech() {
 
         utterance.onboundary = (e) => {
             if (e.name === "word") {
-                const wordIndex = text.slice(0, e.charIndex).split(/\s+/).length;
-                setState(prev => ({ ...prev, currentWord: wordIndex }));
+                const wordIndex = text.slice(0, e.charIndex).split(/\s+/).length - 1;
+                const currentWord = words[wordIndex] || "";
+                setState(prev => ({ ...prev, currentWord: wordIndex, currentWordText: currentWord }));
+
+                // Call word change callback
+                if (optionsRef.current?.onWordChange) {
+                    optionsRef.current.onWordChange(wordIndex, currentWord);
+                }
             }
         };
 
@@ -279,6 +301,7 @@ export function useTextToSpeech() {
             isPaused: false,
             currentWord: 0,
             totalWords: 0,
+            currentWordText: "",
             error: null,
         });
     }, []);
