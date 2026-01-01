@@ -29,7 +29,7 @@
         "webContentsDebuggingEnabled": true
     },
     "server": {
-        "url": "https://storyline-app.vercel.app",
+        "url": "https://storyline-neon.vercel.app",
         "cleartext": false
     }
 }
