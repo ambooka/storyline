@@ -24,6 +24,21 @@ allprojects {
     }
 }
 
+// Fix Kotlin stdlib duplicate class issue
+subprojects {
+    configurations.all {
+        resolutionStrategy {
+            // Force all kotlin-stdlib versions to align
+            force 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
+            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.22'
+            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22'
+        }
+        // Exclude old jdk7/jdk8 variants that are now merged into kotlin-stdlib
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+    }
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
