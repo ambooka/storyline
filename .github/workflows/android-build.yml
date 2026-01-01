@@ -38,8 +38,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Sync Capacitor
-        run: pnpm exec cap sync android
+      - name: Create Capacitor assets directory
+        run: |
+          mkdir -p android/app/src/main/assets/public
+          cp capacitor.config.json android/app/src/main/assets/capacitor.config.json
+          echo '[]' > android/app/src/main/assets/capacitor.plugins.json
+
+      - name: Update Android plugins
+        run: pnpm exec cap update android
 
       - name: Make gradlew executable
         run: chmod +x android/gradlew
